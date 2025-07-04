@@ -1,2 +1,137 @@
+# Based on FPS-sample: https://github.com/Unity-Technologies/FPSSample
+# Organized+extended by Lex-DRL: https://github.com/Lex-DRL/git-template-gamedev
+
 # Auto-detect text/binary by default:
 * 	text=auto eol=lf
+
+# raw-Text files
+*.[Cc][Ss][Vv] text
+*.[Mm][Dd] text diff=markdown
+*.[Tt][Xx][Tt] text
+
+# Checksums
+*.[Mm][Dd]5 text
+*.[Ss][Hh][Aa] text
+*.[Ss][Hh][Aa][0123456789]* text
+
+# Scripts: OS
+*.[Bb][Aa][Tt] text
+*.[Cc][Mm][Dd] text
+*.[Pp][Ll] text
+*.[Pp][Ss]1 text
+*.[Ss][Hh] text diff=bash
+
+# Scripts: Python
+*.[Pp][Yy] text diff=python
+
+# Scripts: Other programming languages
+*.[Cc][Ss] text diff=csharp
+*.[Cc][Ss][Ss] text diff=css
+*.[Hh] text diff=cpp
+*.[Hh][Tt][Mm] text diff=html
+*.[Hh][Tt][Mm][Ll] text diff=html
+*.[Jj][Ss] text
+*.[Jj][Ss][Oo][Nn] text
+*.[Pp][Hh][Pp] text diff=php
+*.[Ss][Qq][Ll] text=auto eol=lf
+*.[Xx][Mm][Ll] text diff=html
+*.[Xx][Hh][Tt][Mm][Ll] text diff=html
+*.[Yy][Aa][Mm][Ll] text
+*.[Yy][Mm][Ll] text
+
+# Visual Studio
+*.[Cc][Ss][Pp][Rr][Oo][Jj] text diff=html
+
+# Vector graphics
+*.[Ss][Vv][Gg] text
+
+
+# =========================================================================== #
+# 	Common binary formats
+# =========================================================================== #
+
+# For LFS: replace "binary" to "filter=lfs diff=lfs merge=lfs -text"
+
+*.[Dd][Bb] binary
+*.[Mm][Dd][Bb] binary
+*.[Pp][Dd][Tt] binary
+
+# Android/Java
+*.[AaJj][Aa][Rr] binary
+*.[Aa][Pp][Kk] binary
+
+# Archives
+*.7[Zz] binary
+*.7[Zz].* binary
+*.[Gg][Zz] binary
+*.[Gg][Zz].* binary
+*.[Zz][Ii][Pp] binary
+*.[RrTt][Aa][Rr] binary
+
+# Python binaries:
+*.[Pp][Yy][CcDdOo] binary
+*.[Pp][Dd][Bb] binary
+*.[Ww][Hh][Ll] binary
+
+# OS libraries / Executables / Software dev
+*.[Aa] binary
+*.[Bb][Yy][Tt][Ee][Ss] binary
+*.[Dd][Ll][Ll] binary
+*.[Ee][Xx][Ee] binary
+*.[Ll][Ii][Bb] binary
+*.[NnXx][Ii][Bb] binary
+*.[Ss][Oo] binary
+*.[Ss][Yy][Ss] binary
+
+# Fonts
+*.[Ee][Oo][Tt] binary
+*.[OoTt][Tt][Ff] binary
+*.[Ww][Oo][Ff][Ff] binary
+*.[Ww][Oo][Ff][Ff]2 binary
+
+# Images: HDR
+*.[Ee][Xx][Rr] binary
+*.[Hh][Dd][Rr] binary
+*.[Tt][Ii][Ff] binary
+*.[Tt][Ii][Ff][Ff] binary
+
+# Images: Primary
+*.[Bb][Mm][Pp] binary
+*.[Gg][Ii][Ff] binary
+*.[Jj][Pp][Gg] binary
+*.[Jj][Pp][Ee][Gg] binary
+*.[Pp][Nn][Gg] binary
+*.[Tt][Gg][Aa] binary
+*.[Ww][Ee][Bb][Pp] binary
+
+# Images: Other
+*.[Cc][Uu][Rr] binary
+*.[Ii][Cc][Nn][Ss] binary
+*.[Ii][Cc][OoNn] binary
+*.[Ii][Cc][Oo][Nn] binary
+*.[Pp][Dd][Ff] binary
+*.[Pp][Ss][DdBb] binary
+
+# Audio
+*.[Aa][Aa][Cc] binary
+*.[AaFf][Ll][Aa][Cc] binary
+*.[Aa][Ii][Ff] binary
+*.[Cc][Aa][Ff] binary
+*.[Mm]4[Aa] binary
+*.[Mm][Pp][1234] binary
+*.[Oo][Gg][GgAa] binary
+*.[Ww][Aa][Vv] binary
+
+# Video
+# mp4 caught by audio pattern
+*.[Aa][Vv][Ii] binary
+*.[Bb][Ii][Kk] binary
+*.[Mm][4KkOo][Vv] binary
+*.[Oo][Gg][VvXx] binary
+*.[Ss][Ww][Ff] binary
+
+
+# =========================================================================== #
+# 	Repo-specific
+# =========================================================================== #
+# add here
