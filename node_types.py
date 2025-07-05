@@ -1,5 +1,6 @@
 # encoding: utf-8
 """
+Pre-defined dictionaries for nice input types.
 """
 
 import typing as _t

@@ -1,8 +1,14 @@
 # encoding: utf-8
 """
+Internal utility functions. They're intended to be used only by the methods within nodes,
+so they might expect the input arguments to already be pre-validated.
 """
 
 import typing as _t
+
+from math import sqrt as _sqrt
+
+from server import PromptServer as _PromptServer
 
 
 _t_number = _t.Union[int, float]
@@ -62,25 +68,35 @@ def round_width_and_height_closest_to_the_ratio(width_f: _t_number, height_f: _t
 	return width, n_steps_x, height, n_steps_y
 
 
-def simple_result_from_approx_wh(width_f: float, height_f: _t_number, step: int):
+def simple_result_from_approx_wh(width_f: float, height_f: _t_number, step: int, unique_id: str = None):
 	"""Final part of the main func for simple (non-upscale) nodes - when desired float/height are already calculated"""
 	step = number_to_int(step)
 	width, n_steps_x, height, n_steps_y = round_width_and_height_closest_to_the_ratio(width_f, height_f, step)
+
+	square_side_f = _sqrt(float(width * height))
+	square_side = int(square_side_f + 0.5)
+	square_side_text = (
+		f"={square_side}x{square_side}"
+		if (square_side * square_side == width * height)
+		else f"~{square_side}x{square_side}"
+	)
 
 	ar_desired = width_f / height_f
 	ar_real = float(width) / height
 	ar_text = (
 		"AR: perfect match"
 		if abs(ar_desired - ar_real) < 0.0005
-		else f"AR desired/real: {ar_desired:.3f}/{ar_real:.3f}"
+		else f"AR goal/real: {ar_desired:.3f}/{ar_real:.3f}"
 	)
 
 	text = (
-		f"{width} x {height}\n"
+		f"{width} x {height} ({square_side_text})\n"
 		f"{n_steps_x} * {step} x {n_steps_y} * {step}\n"
 		f"{ar_text}"
 	)
-	return {
-		# "ui": {"text": [text]},  # TODO: for some reason, it isn't displayed
-		"result": (width, height, text)
-	}
+
+	if unique_id:
+		# Snatched from: https://github.com/comfyanonymous/ComfyUI/blob/27870ec3c30e56be9707d89a120eb7f0e2836be1/comfy_extras/nodes_images.py#L581-L582
+		_PromptServer.instance.send_progress_text(text, unique_id)
+
+	return width, height

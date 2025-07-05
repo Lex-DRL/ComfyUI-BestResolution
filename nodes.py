@@ -1,5 +1,6 @@
 # encoding: utf-8
 """
+The actual nodes defined by the package.
 """
 
 import typing as _t
@@ -20,31 +21,32 @@ from ._funcs import (
 )
 
 
-_48_tooltip = (
-	"The default 48 is (8 * 3 * 2), so it's a safe choice because:\n"
-	"- it's compatible with SD1.5/XL step (divisible by 8),\n"
-	"- it can be upscaled by x1.5 or x1.333 at the first iteration, which is optimal for latent-upscale,\n"
-	"- after x1.5 upscale, if you only do x2 later (it's OK for already high resolutions) - it will be divisible "
-	"by 3 AND 9, which might become handy at that point, where you'll probably use UltimateSDUpscale.\n\n"
-	"Other values worth trying first: 64, 96, 128."
-)
-
 # Tiny optimization by reusing the same immutable dict:
 _input_types_simple = deepfreeze({
 	"required":  {
 		"width": (_IO.INT, dict(type_dict_res, **{"tooltip": "Approximate width"})),
 		"height": (_IO.INT, dict(type_dict_res, **{"tooltip": "Approximate height"})),
 		"step": (_IO.INT, dict(type_dict_step_init, **{"tooltip": (
-			f"Both width and height will be divisible by this value - by rounding them "
-			f"to the closest appropriate resolution.\n\n{_48_tooltip}"
+			"Both width and height will be divisible by this value - by rounding them "
+			"to the closest appropriate resolution.\n\n"
+			"The default 48 is (8 * 3 * 2), so it's a safe choice because:\n"
+			"- it's compatible with SD1.5/XL downsampling factor (divisible by 8),\n"
+			"- it can be upscaled by x1.5 or x1.333 at the first iteration, which is optimal for latent-upscale,\n"
+			"- after x1.5 upscale, if you only do x2 later (it's OK for already high resolutions) - it will be divisible "
+			"by 3 AND 9, which might become handy at that point, where you'll probably use UltimateSDUpscale.\n\n"
+			"Other values worth trying first: 64, 96, 128."
 		)})),
 	},
-	# "hidden": {},
+	"hidden": {
+		"unique_id": "UNIQUE_ID",  # used for text display at the bottom of the node
+	},
 	# "optional": {},
 })
 
-_return_types_simple = (_IO.INT, _IO.INT, _IO.STRING)
-_return_names_simple = ("width", "height", "report")
+# _return_types_simple = (_IO.INT, _IO.INT, _IO.STRING)
+# _return_names_simple = ("width", "height", "report")
+_return_types_simple = (_IO.INT, _IO.INT)
+_return_names_simple = ("width", "height")
 
 
 class BestResolutionSimple:
@@ -56,7 +58,7 @@ class BestResolutionSimple:
 	CATEGORY = "utils/resolution"
 	DESCRIPTION = _cleandoc(__doc__)
 
-	# OUTPUT_NODE = True  # TODO
+	OUTPUT_NODE = True
 
 	FUNCTION = "main"
 	RETURN_TYPES = _return_types_simple
@@ -67,8 +69,8 @@ class BestResolutionSimple:
 	def INPUT_TYPES(cls):
 		return _input_types_simple
 
-	def main(self, width: int, height: int, step: int):
-		return _simple_result_from_approx_wh(float(width), height, step)
+	def main(self, width: int, height: int, step: int, unique_id: str = None):
+		return _simple_result_from_approx_wh(float(width), height, step, unique_id)
 
 
 _tooltip_aspect = (
@@ -104,7 +106,9 @@ _input_types_orient = deepfreeze({
 			"tooltip": _tooltip_aspect
 		}),
 	},
-	# "hidden": {},
+	"hidden": {
+		"unique_id": "UNIQUE_ID",
+	},
 	# "optional": {},
 })
 
@@ -118,7 +122,7 @@ class BestResolutionFromAspectRatio:
 	CATEGORY = "utils/resolution"
 	DESCRIPTION = _cleandoc(__doc__)
 
-	# OUTPUT_NODE = True  # TODO
+	OUTPUT_NODE = True
 
 	FUNCTION = "main"
 	RETURN_TYPES = _return_types_simple
@@ -128,7 +132,7 @@ class BestResolutionFromAspectRatio:
 	def INPUT_TYPES(cls):
 		return _input_types_orient
 
-	def main(self, size: int, step: int, size_is_big: bool, landscape: bool, aspect_a: float, aspect_b: float):
+	def main(self, size: int, step: int, size_is_big: bool, landscape: bool, aspect_a: float, aspect_b: float, unique_id: str = None):
 		aspect_big, aspect_small = _aspect_ratios_sorted(aspect_a, aspect_b)
 
 		side_main_f = float(size)
@@ -141,7 +145,7 @@ class BestResolutionFromAspectRatio:
 			# The opposite: height is bigger
 			width_f, height_f = height_f, width_f
 
-		return _simple_result_from_approx_wh(width_f, height_f, step)
+		return _simple_result_from_approx_wh(width_f, height_f, step, unique_id)
 
 
 _input_types_area = deepfreeze({
@@ -158,7 +162,9 @@ _input_types_area = deepfreeze({
 		"aspect_a": _input_types_orient["required"]["aspect_a"],
 		"aspect_b": _input_types_orient["required"]["aspect_b"],
 	},
-	# "hidden": {},
+	"hidden": {
+		"unique_id": "UNIQUE_ID",
+	},
 	# "optional": {},
 })
 
@@ -181,7 +187,7 @@ class BestResolutionFromArea:
 	CATEGORY = "utils/resolution"
 	DESCRIPTION = _cleandoc(__doc__)
 
-	# OUTPUT_NODE = True  # TODO
+	OUTPUT_NODE = True
 
 	FUNCTION = "main"
 	RETURN_TYPES = _return_types_simple
@@ -191,7 +197,7 @@ class BestResolutionFromArea:
 	def INPUT_TYPES(cls):
 		return _input_types_area
 
-	def main(self, square_size: int, step: int, landscape: bool, aspect_a: float, aspect_b: float):
+	def main(self, square_size: int, step: int, landscape: bool, aspect_a: float, aspect_b: float, unique_id: str = None):
 		# square_size = 1024; step = 48; landscape = True; aspect_a = 9.0; aspect_b = 16.0
 		aspect_big, aspect_small = _aspect_ratios_sorted(aspect_a, aspect_b)
 		aspect_x, aspect_y = (aspect_big, aspect_small) if landscape else (aspect_small, aspect_big)
@@ -206,4 +212,4 @@ class BestResolutionFromArea:
 		width_f = aspect_x * square_size
 		height_f = aspect_y * square_size
 
-		return _simple_result_from_approx_wh(width_f, height_f, step)
+		return _simple_result_from_approx_wh(width_f, height_f, step, unique_id)
