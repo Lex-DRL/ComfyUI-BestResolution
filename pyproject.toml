@@ -7,7 +7,7 @@ authors = [
 ]
 license = {file = "LICENSE.md"}
 readme = "README.md"
-dependencies = []
+dependencies = ["frozendict"]
 
 [project.urls]
 Repository = "https://github.com/Lex-DRL/ComfyUI-BestResolution"
@@ -15,5 +15,5 @@ Repository = "https://github.com/Lex-DRL/ComfyUI-BestResolution"
 
 [tool.comfy]
 PublisherId = "lex-drl"
-DisplayName = "ComfyUI-BestResolution"
+DisplayName = "Best Resolution"
 Icon = ""
