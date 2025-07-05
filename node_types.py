@@ -31,4 +31,4 @@ def number_to_int(value: _t.Union[int, float], min: int = 1) -> int:
 
 type_dict_step_init = number_type_dict(48)
 type_dict_step_upscale1 = number_type_dict(128)
-type_dict_res = number_type_dict(512)
+type_dict_res = number_type_dict(1024)
