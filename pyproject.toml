@@ -1,6 +1,6 @@
 [project]
-name = "comfyui-bestresolution"
-description = "Nodes for semi-automatic calculation of the best (most optimal) resolution, compatible with ANY model (from now or the future), accounting for upscale and pixel-step."
+name = "comfyui-best-resolution"
+description = "QoL nodes for semi-automatic calculation of the best (most optimal) sampling resolution, compatible with ANY model (from now or in the future), accounting for upscale and pixel-step."
 version = "0.0.1"
 authors = [
   {name = "Lex Darlog"}
