@@ -5,12 +5,14 @@
 from .nodes import *
 
 NODE_CLASS_MAPPINGS = {
-	"BestResolutionSimple": BestResolutionSimple,
+	"BestResolutionFromArea": BestResolutionFromArea,
 	"BestResolutionFromAspectRatio": BestResolutionFromAspectRatio,
+	"BestResolutionSimple": BestResolutionSimple,
 }
 NODE_DISPLAY_NAME_MAPPINGS = {
-	"BestResolutionSimple": "Best-Res (simple)",
+	"BestResolutionFromArea": "Best-Res (area)",
 	"BestResolutionFromAspectRatio": "Best-Res (ratio)",
+	"BestResolutionSimple": "Best-Res (simple)",
 }
 
 __all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS"]

@@ -19,16 +19,6 @@ def number_type_dict(default: int = 512, min: int = 1, max: int = _sys.maxsize, 
 	}
 
 
-def number_to_int(value: _t.Union[int, float], min: int = 1) -> int:
-	if not isinstance(value, int):
-		if isinstance(value, float):
-			sign = -1 if value < 0.0 else 1
-			value = int(value * sign + 0.5) * sign
-		else:
-			value = int(value)
-	return max(value, min)
-
-
 type_dict_step_init = number_type_dict(48)
 type_dict_step_upscale1 = number_type_dict(128)
 type_dict_res = number_type_dict(1024)
