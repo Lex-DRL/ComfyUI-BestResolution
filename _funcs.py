@@ -76,7 +76,7 @@ def simple_result_from_approx_wh(width_f: float, height_f: _t_number, step: int,
 	square_side_f = _sqrt(float(width * height))
 	square_side = int(square_side_f + 0.5)
 	square_side_text = (
-		f"={square_side}x{square_side}"
+		f"✅={square_side}x{square_side}"
 		if (square_side * square_side == width * height)
 		else f"~{square_side}x{square_side}"
 	)
@@ -84,7 +84,7 @@ def simple_result_from_approx_wh(width_f: float, height_f: _t_number, step: int,
 	ar_desired = width_f / height_f
 	ar_real = float(width) / height
 	ar_text = (
-		"AR: perfect match"
+		"AR: ✅ perfect match"
 		if abs(ar_desired - ar_real) < 0.0005
 		else f"AR goal/real: {ar_desired:.3f}/{ar_real:.3f}"
 	)
