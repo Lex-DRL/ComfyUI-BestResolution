@@ -1,0 +1,19 @@
+[project]
+name = "comfyui-best-resolution"
+description = "QoL nodes for semi-automatic calculation of the best (most optimal) sampling resolution, compatible with ANY model (from now or in the future), accounting for upscale and pixel-step."
+version = "0.0.1"
+authors = [
+  {name = "Lex Darlog"}
+]
+license = {file = "LICENSE.md"}
+readme = "README.md"
+dependencies = ["frozendict"]
+
+[project.urls]
+Repository = "https://github.com/Lex-DRL/ComfyUI-BestResolution"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = "lex-drl"
+DisplayName = "Best Resolution"
+Icon = ""
