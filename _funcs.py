@@ -68,34 +68,68 @@ def round_width_and_height_closest_to_the_ratio(width_f: _t_number, height_f: _t
 	return width, n_steps_x, height, n_steps_y
 
 
-def simple_result_from_approx_wh(width_f: float, height_f: _t_number, step: int, unique_id: str = None):
-	"""Final part of the main func for simple (non-upscale) nodes - when desired float/height are already calculated"""
-	step = number_to_int(step)
-	width, n_steps_x, height, n_steps_y = round_width_and_height_closest_to_the_ratio(width_f, height_f, step)
+def _format_report_square_part(
+	width_f: float, height_f: _t_number,
+	width: int, height: int,
+	target_square_size: _t_number = None
+) -> str:
+	area_output = width * height
+	if target_square_size is not None:
+		target_square_size = max(abs(target_square_size), 1)
+		target_square_size_i = int(target_square_size + 0.5)
+		if target_square_size_i * target_square_size_i == area_output:
+			return f"=👑{target_square_size_i}🔳"
+			# return f"=💯{target_square_size_i}🔳"
+			# return f"=✨{target_square_size_i}🔳"
+		if int(target_square_size * target_square_size + 0.5) == area_output:
+			return f"=✨{target_square_size:.2f}🔳"
+			# return f"=🌟{target_square_size:.2f}🔳"
 
-	square_side_f = _sqrt(float(width * height))
-	square_side = int(square_side_f + 0.5)
-	square_side_text = (
-		f"✅={square_side}x{square_side}"
-		if (square_side * square_side == width * height)
-		else f"~{square_side}x{square_side}"
-	)
+	desired_square_area_f = float(width_f) * height_f
+	desired_square_side_f = _sqrt(desired_square_area_f)
+	desired_square_side_i = int(desired_square_side_f + 0.5)
+	if desired_square_side_i * desired_square_side_i == area_output:
+		return f"=✅{desired_square_side_i}🔳"
+
+	actual_square_side_f = _sqrt(float(area_output))
+	actual_square_side_i = int(actual_square_side_f + 0.5)
+	if abs(actual_square_side_f - actual_square_side_i) < 0.005:
+		return f"~={actual_square_side_i}🔳"
+	return f"~={actual_square_side_f:.2f}🔳"
+
+
+def format_report(
+	width_f: float, height_f: _t_number, step: int,
+	width: int, n_steps_x: int, height: int, n_steps_y: int,
+	target_square_size: _t_number = None
+) -> str:
+	square_side_text = _format_report_square_part(width_f, height_f, width, height, target_square_size)
 
 	ar_desired = width_f / height_f
 	ar_real = float(width) / height
 	ar_text = (
-		"AR: ✅ perfect match"
+		f"AR: ✅ {ar_real:.3f}"
 		if abs(ar_desired - ar_real) < 0.0005
-		else f"AR goal/real: {ar_desired:.3f}/{ar_real:.3f}"
+		else f"AR real/goal: {ar_real:.3f}/{ar_desired:.3f}"
 	)
 
-	text = (
-		f"{width} x {height} ({square_side_text})\n"
-		f"{n_steps_x} * {step} x {n_steps_y} * {step}\n"
+	return (
+		f"{width}/{height}{square_side_text}\n"
+		f"{n_steps_x} * {step} / {n_steps_y} * {step}\n"
 		f"{ar_text}"
 	)
 
+
+def simple_result_from_approx_wh(
+	width_f: float, height_f: _t_number, step: int,
+	unique_id: str = None, target_square_size: _t_number = None
+):
+	"""Final part of the main func for simple (non-upscale) nodes - when desired float/height are already calculated"""
+	step = number_to_int(step)
+	width, n_steps_x, height, n_steps_y = round_width_and_height_closest_to_the_ratio(width_f, height_f, step)
+
 	if unique_id:
+		text = format_report(width_f, height_f, step, width, n_steps_x, height, n_steps_y, target_square_size)
 		# Snatched from: https://github.com/comfyanonymous/ComfyUI/blob/27870ec3c30e56be9707d89a120eb7f0e2836be1/comfy_extras/nodes_images.py#L581-L582
 		_PromptServer.instance.send_progress_text(text, unique_id)
 
