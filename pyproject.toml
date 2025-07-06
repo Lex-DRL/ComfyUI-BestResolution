@@ -1,7 +1,7 @@
 [project]
 name = "comfyui-best-resolution"
-description = "QoL nodes for semi-automatic calculation of the best (most optimal) sampling resolution, compatible with ANY model (from now or in the future), accounting for upscale and pixel-step."
-version = "0.0.2"
+description = "QoL nodes for semi-automatic calculation of the best (most optimal) sampling resolution \n-compatible with ANY model (from now or the future), \n-accounting for upscale \n-and pixel-step."
+version = "0.0.3"
 authors = [
   {name = "Lex Darlog"}
 ]

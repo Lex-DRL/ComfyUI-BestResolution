@@ -70,7 +70,7 @@ class BestResolutionSimple:
 		return _input_types_simple
 
 	def main(self, width: int, height: int, step: int, unique_id: str = None):
-		return _simple_result_from_approx_wh(float(width), height, step, unique_id)
+		return _simple_result_from_approx_wh(float(width), height, step, unique_id, _sqrt(width * height))
 
 
 _tooltip_aspect = (
@@ -145,7 +145,7 @@ class BestResolutionFromAspectRatio:
 			# The opposite: height is bigger
 			width_f, height_f = height_f, width_f
 
-		return _simple_result_from_approx_wh(width_f, height_f, step, unique_id)
+		return _simple_result_from_approx_wh(width_f, height_f, step, unique_id, _sqrt(width_f * height_f))
 
 
 _input_types_area = deepfreeze({
@@ -212,4 +212,4 @@ class BestResolutionFromArea:
 		width_f = aspect_x * square_size
 		height_f = aspect_y * square_size
 
-		return _simple_result_from_approx_wh(width_f, height_f, step, unique_id)
+		return _simple_result_from_approx_wh(width_f, height_f, step, unique_id, square_size)
