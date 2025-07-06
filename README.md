@@ -59,16 +59,17 @@ This parameter has the highest priority. A desired resolution is slightly tweake
 
 So, this imposes a few restrictions on the initial gen if we want to avoid cropping/outpainting later:
 - The initial image must be a multiple of `8`
-- After 1.5x upscale it must also be a multiple of `8` - so a +0.5 of size must be divisible by 8, or the initial step must be divisible by `8*2`
-- After the mentioned 1.5x upscale we get into a territory where the ONLY next upscale we can do is 2x - which at that point might have not enough resolution to safely do so without messing up some details and having to denoise with high value again, losing some aspects of the base image we liked. That's a bummer...
-  - HOWEVER, if our initial `step` had another integer multiple built into it, we could do a fractional upscale again.
-  - This multiple could be `2` again... but after some tests I discovered `3` is a better choice. So, our total step needs to be `8*2*3` - then the second upscale could be +1/3 or 1.3333x
-- On the other hand, if the second upscale was not fractional but 2x, we can use the fact that we did a 1.5x before - since together they become another multiple of 3, or, in other words, the upscaled image could be divided by 9 on each side.
-  - This is not at all necessary for "regular"-sized HD images, but might become handy for later ultra-upscales (6k+) with USDU.
+- After 1.5x upscale it must also be a multiple of `8` - so a +0.5 of size must be divisible by 8, or the initial step must be `8*2`.
+- After the first 1.5x upscale _(with the original `step` being `8*2`, or `16`)_ our image became divisible by `8*2*1.5`, or `8*3`, so the second upscale could be +1/3 aka 1.333x. And if we do so, we actually reach the total size of 2x of the original gen.
+- However, if we do so, at the very next step our divisibility would be `8*3*1.333`, or `8*4`.
+  - This is good since the third upscale could be either 1.5x or 1.25x... but it can't be another +1/3.
+- So, to workaround it, it's safer to include another multiple of `3` into the original `step` _(so, together it becomes `8*2*3`)_.
+  - With it, we can do the previous 1.5x > 1.333x, followed by either 1.5x/1.25x **or 1.333x**.
+  - If instead we did 1.5x > **2x** - then we end up with a triple of the original size **AND** we have another multiple of 3 built-in, so the image has become divisible by `9`. This is not at all necessary for "regular"-sized HD images, but it might become **very** handy for later ultra-upscales (6k+) with USDU.
 
-Combining all of the above, our lowest common denominator is `8*2*3`, and assuming we do 1.5x + 2x upscales, it will naturally become divisible by `9` down the road.
+Summarizing all of the above, our lowest common denominator to be safe during first few upscales is `8*2*3`.
 
 **Thus, `48` by default.**
 
-But if you prefer to always upscale by 1.5, you might look into `8*2*2` = `32`.
+Additionally, if you prefer to always upscale by 1.5, you might look into `8*2*2` = `32`.
 Or, to allow a few more of 1.5x upscales (or a 1.25x one), or to get the resolution closer to the ones we used to (1080p, 1440p, etc), you might want to increase it by a power of 2, getting `64`, `96`, `128`, `192`, `256`, etc.
