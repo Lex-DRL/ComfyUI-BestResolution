@@ -21,7 +21,7 @@ def aspect_ratios_sorted(aspect_a: float, aspect_b: float, min_clamp: float = 1.
 	return (aspect_b, aspect_a) if aspect_b > aspect_a else (aspect_a, aspect_b)
 
 
-def number_to_int(value: _t.Union[int, float], min: int = 1) -> int:
+def number_to_int(value: _t_number, min: int = 1) -> int:
 	if not isinstance(value, int):
 		if isinstance(value, float):
 			sign = -1 if value < 0.0 else 1
@@ -31,12 +31,17 @@ def number_to_int(value: _t.Union[int, float], min: int = 1) -> int:
 	return max(value, min)
 
 
-def round_abs(abs_value: _t_number, step: int):
+def round_pos_int(value: float) -> int:
+	"""Assuming a positive float is provided, rounds it to the nearest integer."""
+	return int(value + 0.5)
+
+
+def round_abs_to_step(abs_value: _t_number, step: int):
 	"""
 	Assuming both args are positive and ``step`` is already an int, detect the closest positive (non-zero) value
 	which is also divisible by step.
 	"""
-	n_steps = int(float(abs_value) / step + 0.5)
+	n_steps = round_pos_int(float(abs_value) / step)
 	n_steps = max(n_steps, 1)
 	return step * n_steps, n_steps
 
@@ -46,12 +51,12 @@ def round_width_and_height_closest_to_the_ratio(width_f: _t_number, height_f: _t
 	desired_width_to_height_ratio = float(width_f) / height_f
 
 	# First pass: directly from width_f and height_f
-	width, n_steps_x = round_abs(width_f, step)
-	height, n_steps_y = round_abs(height_f, step)
+	width, n_steps_x = round_abs_to_step(width_f, step)
+	height, n_steps_y = round_abs_to_step(height_f, step)
 
 	# Second pass: try calculating one side from already rounded another one:
-	height_from_width, n_steps_y_from_x = round_abs(float(width) / desired_width_to_height_ratio, step)
-	width_from_height, n_steps_x_from_y = round_abs(float(height) * desired_width_to_height_ratio, step)
+	height_from_width, n_steps_y_from_x = round_abs_to_step(float(width) / desired_width_to_height_ratio, step)
+	width_from_height, n_steps_x_from_y = round_abs_to_step(float(height) * desired_width_to_height_ratio, step)
 
 	# ... and select one of three options, closest to the perfect ratio:
 	closest_delta = abs((float(width) / height) - desired_width_to_height_ratio)
@@ -68,6 +73,23 @@ def round_width_and_height_closest_to_the_ratio(width_f: _t_number, height_f: _t
 	return width, n_steps_x, height, n_steps_y
 
 
+def float_width_height_from_area(square_size: _t_number, landscape: bool, aspect_a: float, aspect_b: float):
+	"""The main function for the regular (non-upscale) ``area``-subtype node."""
+	# square_size = 1024; step = 48; landscape = True; aspect_a = 9.0; aspect_b = 16.0
+	aspect_big, aspect_small = aspect_ratios_sorted(aspect_a, aspect_b)
+	aspect_x, aspect_y = (aspect_big, aspect_small) if landscape else (aspect_small, aspect_big)
+
+	aspect_area = aspect_x * aspect_y
+	aspect_norm_scale = 1.0 / _sqrt(aspect_area)
+	aspect_x *= aspect_norm_scale
+	aspect_y *= aspect_norm_scale
+	# Now the two aspects produce a normalized rectangle - i.e., it's area is 1
+
+	width_f: float = aspect_x * square_size
+	height_f: float = aspect_y * square_size
+	return width_f, height_f
+
+
 def _format_report_square_part(
 	width_f: float, height_f: _t_number,
 	width: int, height: int,
@@ -76,23 +98,23 @@ def _format_report_square_part(
 	area_output = width * height
 	if target_square_size is not None:
 		target_square_size = max(abs(target_square_size), 1)
-		target_square_size_i = int(target_square_size + 0.5)
+		target_square_size_i = round_pos_int(target_square_size)
 		if target_square_size_i * target_square_size_i == area_output:
 			return f"=👑{target_square_size_i}🔳"
 			# return f"=💯{target_square_size_i}🔳"
 			# return f"=✨{target_square_size_i}🔳"
-		if int(target_square_size * target_square_size + 0.5) == area_output:
+		if round_pos_int(target_square_size * target_square_size) == area_output:
 			return f"=✨{target_square_size:.2f}🔳"
 			# return f"=🌟{target_square_size:.2f}🔳"
 
 	desired_square_area_f = float(width_f) * height_f
 	desired_square_side_f = _sqrt(desired_square_area_f)
-	desired_square_side_i = int(desired_square_side_f + 0.5)
+	desired_square_side_i = round_pos_int(desired_square_side_f)
 	if desired_square_side_i * desired_square_side_i == area_output:
 		return f"=✅{desired_square_side_i}🔳"
 
 	actual_square_side_f = _sqrt(float(area_output))
-	actual_square_side_i = int(actual_square_side_f + 0.5)
+	actual_square_side_i = round_pos_int(actual_square_side_f)
 	if abs(actual_square_side_f - actual_square_side_i) < 0.005:
 		return f"~={actual_square_side_i}🔳"
 	return f"~={actual_square_side_f:.2f}🔳"
@@ -121,7 +143,7 @@ def format_report(
 
 
 def simple_result_from_approx_wh(
-	width_f: float, height_f: _t_number, step: int,
+	width_f: float, height_f: _t_number, step: int, show: bool = True,
 	unique_id: str = None, target_square_size: _t_number = None
 ):
 	"""Final part of the main func for simple (non-upscale) nodes - when desired float/height are already calculated"""
@@ -129,7 +151,13 @@ def simple_result_from_approx_wh(
 	width, n_steps_x, height, n_steps_y = round_width_and_height_closest_to_the_ratio(width_f, height_f, step)
 
 	if unique_id:
-		text = format_report(width_f, height_f, step, width, n_steps_x, height, n_steps_y, target_square_size)
+		text = (
+			format_report(width_f, height_f, step, width, n_steps_x, height, n_steps_y, target_square_size)
+			if show
+			# TODO: Planned for the future - currently, there's no point removing the text since it's box is shown anyway
+			else '<span></span>' # An odd workaround since `send_progress_text()` doesn't want to update text when '' passed
+		)
+		# print(f"{unique_id} text: {text!r}")
 		# Snatched from: https://github.com/comfyanonymous/ComfyUI/blob/27870ec3c30e56be9707d89a120eb7f0e2836be1/comfy_extras/nodes_images.py#L581-L582
 		_PromptServer.instance.send_progress_text(text, unique_id)
 
