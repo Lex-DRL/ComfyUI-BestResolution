@@ -138,7 +138,7 @@ def format_report(
 
 
 def simple_result_from_approx_wh(
-	width_f: float, height_f: _t_number, step: int,
+	width_f: float, height_f: _t_number, step: int, show: bool = True,
 	unique_id: str = None, target_square_size: _t_number = None
 ):
 	"""Final part of the main func for simple (non-upscale) nodes - when desired float/height are already calculated"""
@@ -146,7 +146,13 @@ def simple_result_from_approx_wh(
 	width, n_steps_x, height, n_steps_y = round_width_and_height_closest_to_the_ratio(width_f, height_f, step)
 
 	if unique_id:
-		text = format_report(width_f, height_f, step, width, n_steps_x, height, n_steps_y, target_square_size)
+		text = (
+			format_report(width_f, height_f, step, width, n_steps_x, height, n_steps_y, target_square_size)
+			if show
+			# TODO: Planned for the future - currently, there's no point removing the text since it's box is shown anyway
+			else '<span></span>' # An odd workaround since `send_progress_text()` doesn't want to update text when '' passed
+		)
+		# print(f"{unique_id} text: {text!r}")
 		# Snatched from: https://github.com/comfyanonymous/ComfyUI/blob/27870ec3c30e56be9707d89a120eb7f0e2836be1/comfy_extras/nodes_images.py#L581-L582
 		_PromptServer.instance.send_progress_text(text, unique_id)
 

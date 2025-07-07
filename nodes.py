@@ -37,6 +37,11 @@ _input_types_simple = deepfreeze({
 			"by 3 AND 9, which might become handy at that point, where you'll probably use UltimateSDUpscale.\n\n"
 			"Other values worth trying first: 64, 96, 128."
 		)})),
+		# 'show': (_IO.BOOLEAN, {
+		# 	'default': True,
+		# 	# 'label_on': 'on', 'label_off': 'off',
+		# 	'tooltip': "Show the result on the node itself?",
+		# }),
 	},
 	'hidden': {
 		'unique_id': 'UNIQUE_ID',  # used for text display at the bottom of the node
@@ -70,8 +75,16 @@ class BestResolutionSimple:
 	def INPUT_TYPES(cls):
 		return _input_types_simple
 
-	def main(self, width: int, height: int, step: int, unique_id: str = None):
-		return _simple_result_from_approx_wh(float(width), height, step, unique_id, _sqrt(width * height))
+	def main(
+		self, width: int, height: int, step: int,
+		# show: bool,
+		unique_id: str = None
+	):
+		return _simple_result_from_approx_wh(
+			float(width), height, step,
+			# show,
+			unique_id=unique_id, target_square_size=_sqrt(width * height)
+		)
 
 
 _tooltip_aspect = (
@@ -106,6 +119,7 @@ _input_types_orient = deepfreeze({
 			'default': 9.0, 'min': 1.0, 'max': _sys.float_info.max, 'step': 1.0, 'round': 0.001,
 			'tooltip': _tooltip_aspect
 		}),
+		# 'show': _input_types_simple['required']['show'],
 	},
 	'hidden': {
 		'unique_id': 'UNIQUE_ID',
@@ -133,7 +147,12 @@ class BestResolutionFromAspectRatio:
 	def INPUT_TYPES(cls):
 		return _input_types_orient
 
-	def main(self, size: int, step: int, size_is_big: bool, landscape: bool, aspect_a: float, aspect_b: float, unique_id: str = None):
+	def main(
+		self,
+		size: int, step: int, size_is_big: bool, landscape: bool, aspect_a: float, aspect_b: float,
+		# show: bool,
+		unique_id: str = None
+	):
 		aspect_big, aspect_small = _aspect_ratios_sorted(aspect_a, aspect_b)
 
 		side_main_f = float(size)
@@ -146,7 +165,11 @@ class BestResolutionFromAspectRatio:
 			# The opposite: height is bigger
 			width_f, height_f = height_f, width_f
 
-		return _simple_result_from_approx_wh(width_f, height_f, step, unique_id, _sqrt(width_f * height_f))
+		return _simple_result_from_approx_wh(
+			width_f, height_f, step,
+			# show,
+			unique_id=unique_id, target_square_size=_sqrt(width_f * height_f)
+		)
 
 
 _input_types_area = deepfreeze({
@@ -162,6 +185,7 @@ _input_types_area = deepfreeze({
 		'landscape': _input_types_orient['required']['landscape'],
 		'aspect_a': _input_types_orient['required']['aspect_a'],
 		'aspect_b': _input_types_orient['required']['aspect_b'],
+		# 'show': _input_types_simple['required']['show'],
 	},
 	'hidden': {
 		'unique_id': 'UNIQUE_ID',
@@ -198,7 +222,16 @@ class BestResolutionFromArea:
 	def INPUT_TYPES(cls):
 		return _input_types_area
 
-	def main(self, square_size: int, step: int, landscape: bool, aspect_a: float, aspect_b: float, unique_id: str = None):
+	def main(
+		self,
+		square_size: int, step: int, landscape: bool, aspect_a: float, aspect_b: float,
+		# show: bool,
+		unique_id: str = None
+	):
 		square_size: int = _number_to_int(square_size)
 		width_f, height_f = _float_width_height_from_area(square_size, landscape, aspect_a, aspect_b)
-		return _simple_result_from_approx_wh(width_f, height_f, step, unique_id, square_size)
+		return _simple_result_from_approx_wh(
+			width_f, height_f, step,
+			# show,
+			unique_id=unique_id, target_square_size=square_size
+		)
