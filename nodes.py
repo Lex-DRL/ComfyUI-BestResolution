@@ -9,7 +9,7 @@ from inspect import cleandoc as _cleandoc
 from math import sqrt as _sqrt
 import sys as _sys
 
-from frozendict import deepfreeze
+from frozendict import deepfreeze, frozendict
 
 from comfy.comfy_types.node_typing import IO as _IO
 
@@ -235,3 +235,70 @@ class BestResolutionFromArea:
 			# show,
 			unique_id=unique_id, target_square_size=square_size
 		)
+
+
+_return_types_upscale = (_IO.INT, _IO.INT, _IO.INT, _IO.INT)
+_return_ttips_upscale = frozendict({
+	'orig_w': "Width for original image",
+	'orig_h': "Height for original image",
+	'up_w': "Width for upscaled image",
+	'up_h': "Height for upscaled image"
+})
+_return_names_upscale = tuple(_return_ttips_upscale.keys())
+
+__extra_inputs_for_upscale_only = {
+	'priority': (_IO.BOOLEAN, {
+		'default': True, 'label_on': 'upscaled', 'label_off': 'original',
+		'tooltip': (
+			"Which of the resolutions is more important to be as close to the desired as possible:\n\n"
+			"When ON, the rounded with/height are first calculated for the UPSCALED resolution - and "
+			"only then the original ones are back-tracked from them.\n"
+			"When OFF, they're first calculated for the ORIGINAL resolution - and "
+			"the upscaled ones are tracked forward from them."
+		)
+	}),
+	'upscale': (_IO.FLOAT, {
+		'default': 1.5, 'min': 1.0, 'max': _sys.float_info.max, 'step': 0.25, 'round': 0.001,
+		# 'tooltip': "",  # TODO
+	}),
+	'up_step': (_IO.INT, dict(type_dict_step_upscale1, **{
+		'tooltip': "Same as the main `step`, but for the upscaled resolution.",
+	})),
+}
+
+_input_types_area_upscale = deepfreeze({
+	'required': dict(
+		(k_v for k_v in _input_types_area['required'].items() if k_v[0] != 'show'),
+		**__extra_inputs_for_upscale_only,
+		# show=_input_types_area['required']['show'],
+	),
+	'hidden': {
+		'unique_id': 'UNIQUE_ID',
+	},
+	# 'optional': {},
+})
+
+
+class BestResolutionFromAreaUpscale:
+	NODE_NAME = 'BestResolutionFromAreaUpscale'
+	CATEGORY = "utils/resolution"
+	DESCRIPTION = _cleandoc(__doc__)
+
+	OUTPUT_NODE = True
+
+	FUNCTION = 'main'
+	RETURN_TYPES = _return_types_upscale
+	RETURN_NAMES = _return_names_upscale
+	RETURN_TYPES_TOOLTIPS = _return_ttips_upscale
+
+	@classmethod
+	def INPUT_TYPES(cls):
+		return _input_types_area_upscale
+
+	def main(
+		self, square_size: int, step: int, landscape: bool, aspect_a: float, aspect_b: float,
+		priority: bool, upscale: float, up_step:int,
+		# show: bool,
+		unique_id: str = None
+	):
+		pass
