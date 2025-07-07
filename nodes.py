@@ -23,10 +23,10 @@ from ._funcs import (
 
 # Tiny optimization by reusing the same immutable dict:
 _input_types_simple = deepfreeze({
-	"required":  {
-		"width": (_IO.INT, dict(type_dict_res, **{"tooltip": "Approximate width"})),
-		"height": (_IO.INT, dict(type_dict_res, **{"tooltip": "Approximate height"})),
-		"step": (_IO.INT, dict(type_dict_step_init, **{"tooltip": (
+	'required': {
+		'width': (_IO.INT, dict(type_dict_res, **{'tooltip': "Approximate width"})),
+		'height': (_IO.INT, dict(type_dict_res, **{'tooltip': "Approximate height"})),
+		'step': (_IO.INT, dict(type_dict_step_init, **{'tooltip': (
 			"Both width and height will be divisible by this value - by rounding them "
 			"to the closest appropriate resolution.\n\n"
 			"The default 48 is (8 * 3 * 2), so it's a safe choice because:\n"
@@ -37,16 +37,16 @@ _input_types_simple = deepfreeze({
 			"Other values worth trying first: 64, 96, 128."
 		)})),
 	},
-	"hidden": {
-		"unique_id": "UNIQUE_ID",  # used for text display at the bottom of the node
+	'hidden': {
+		'unique_id': 'UNIQUE_ID',  # used for text display at the bottom of the node
 	},
-	# "optional": {},
+	# 'optional': {},
 })
 
 # _return_types_simple = (_IO.INT, _IO.INT, _IO.STRING)
-# _return_names_simple = ("width", "height", "report")
+# _return_names_simple = ('width', 'height', 'report')
 _return_types_simple = (_IO.INT, _IO.INT)
-_return_names_simple = ("width", "height")
+_return_names_simple = ('width', 'height')
 
 
 class BestResolutionSimple:
@@ -54,13 +54,13 @@ class BestResolutionSimple:
 	The simplest node for easier selection of an optimal resolution:
 	only rounding performed, desired image size specified directly.
 	"""
-	NODE_NAME = "BestResolutionSimple"
+	NODE_NAME = 'BestResolutionSimple'
 	CATEGORY = "utils/resolution"
 	DESCRIPTION = _cleandoc(__doc__)
 
 	OUTPUT_NODE = True
 
-	FUNCTION = "main"
+	FUNCTION = 'main'
 	RETURN_TYPES = _return_types_simple
 	# RETURN_TYPES_TOOLTIPS = {}
 	RETURN_NAMES = _return_names_simple
@@ -80,36 +80,36 @@ _tooltip_aspect = (
 )
 
 _input_types_orient = deepfreeze({
-	"required":  {
-		"size": (_IO.INT, dict(type_dict_res, **{"tooltip": (
+	'required': {
+		'size': (_IO.INT, dict(type_dict_res, **{'tooltip': (
 			"Approximate size of one of the image sides.\nWhich one - see the 'size_is_big' and 'landscape' toggles."
 		)})),
-		"step": _input_types_simple["required"]["step"],
-		"size_is_big": (_IO.BOOLEAN, {
-			"default": True, "label_on": "bigger", "label_off": "smaller",
-			"tooltip": "When ON, size parameter represents the bigger image side.\nWhen OFF, it specifies the smaller one."
+		'step': _input_types_simple['required']['step'],
+		'size_is_big': (_IO.BOOLEAN, {
+			'default': True, 'label_on': 'bigger', 'label_off': 'smaller',
+			'tooltip': "When ON, size parameter represents the bigger image side.\nWhen OFF, it specifies the smaller one."
 		}),
-		"landscape": (_IO.BOOLEAN, {
-			"default": True, "label_on": "landscape", "label_off": "portrait",
-			"tooltip": (
+		'landscape': (_IO.BOOLEAN, {
+			'default': True, 'label_on': 'landscape', 'label_off': 'portrait',
+			'tooltip': (
 				"Specifies image orientation:\n\n"
 				"When ON, width is bigger (image is horizontal).\n"
 				"When OFF, height is bigger (image is vertical)."
 			)
 		}),
-		"aspect_a": (_IO.FLOAT, {
-			"default": 16.0, "min": 1.0, "max": _sys.float_info.max, "step": 1.0, "round": 0.001,
-			"tooltip": _tooltip_aspect
+		'aspect_a': (_IO.FLOAT, {
+			'default': 16.0, 'min': 1.0, 'max': _sys.float_info.max, 'step': 1.0, 'round': 0.001,
+			'tooltip': _tooltip_aspect
 		}),
-		"aspect_b": (_IO.FLOAT, {
-			"default": 9.0, "min": 1.0, "max": _sys.float_info.max, "step": 1.0, "round": 0.001,
-			"tooltip": _tooltip_aspect
+		'aspect_b': (_IO.FLOAT, {
+			'default': 9.0, 'min': 1.0, 'max': _sys.float_info.max, 'step': 1.0, 'round': 0.001,
+			'tooltip': _tooltip_aspect
 		}),
 	},
-	"hidden": {
-		"unique_id": "UNIQUE_ID",
+	'hidden': {
+		'unique_id': 'UNIQUE_ID',
 	},
-	# "optional": {},
+	# 'optional': {},
 })
 
 
@@ -118,13 +118,13 @@ class BestResolutionFromAspectRatio:
 	A more advanced node for easier selection of an optimal resolution:
 	image size selected indirectly - by one of the sides + aspect ratio.
 	"""
-	NODE_NAME = "BestResolutionFromAspectRatio"
+	NODE_NAME = 'BestResolutionFromAspectRatio'
 	CATEGORY = "utils/resolution"
 	DESCRIPTION = _cleandoc(__doc__)
 
 	OUTPUT_NODE = True
 
-	FUNCTION = "main"
+	FUNCTION = 'main'
 	RETURN_TYPES = _return_types_simple
 	RETURN_NAMES = _return_names_simple
 
@@ -149,23 +149,23 @@ class BestResolutionFromAspectRatio:
 
 
 _input_types_area = deepfreeze({
-	"required":  {
-		"square_size": (_IO.INT, dict(type_dict_res, **{"tooltip": (
+	'required': {
+		'square_size': (_IO.INT, dict(type_dict_res, **{'tooltip': (
 			"The total resolution of the image would be the same as of a square with this side.\n"
 			"The width and height would be such to respect aspect ratio, but also be as close as possible to the "
 			"total number of pixels as in this square image.\n\n"
 			"- 512x512 square (SD 1.5): ~0.25 megapixels\n"
 			"- 1024x1024 square (SDXL): ~1 megapixel"
 		)})),
-		"step": _input_types_simple["required"]["step"],
-		"landscape": _input_types_orient["required"]["landscape"],
-		"aspect_a": _input_types_orient["required"]["aspect_a"],
-		"aspect_b": _input_types_orient["required"]["aspect_b"],
+		'step': _input_types_simple['required']['step'],
+		'landscape': _input_types_orient['required']['landscape'],
+		'aspect_a': _input_types_orient['required']['aspect_a'],
+		'aspect_b': _input_types_orient['required']['aspect_b'],
 	},
-	"hidden": {
-		"unique_id": "UNIQUE_ID",
+	'hidden': {
+		'unique_id': 'UNIQUE_ID',
 	},
-	# "optional": {},
+	# 'optional': {},
 })
 
 
@@ -183,13 +183,13 @@ class BestResolutionFromArea:
 	By simply providing this single number and setting your aspect ratio/orientation, you get the width and height to
 	produce the closest total resolution to the training set, while also respecting image proportions and step-rounding.
 	"""
-	NODE_NAME = "BestResolutionFromArea"
+	NODE_NAME = 'BestResolutionFromArea'
 	CATEGORY = "utils/resolution"
 	DESCRIPTION = _cleandoc(__doc__)
 
 	OUTPUT_NODE = True
 
-	FUNCTION = "main"
+	FUNCTION = 'main'
 	RETURN_TYPES = _return_types_simple
 	RETURN_NAMES = _return_names_simple
 
