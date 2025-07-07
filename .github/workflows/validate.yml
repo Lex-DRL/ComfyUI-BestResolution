@@ -1,9 +1,12 @@
 name: 🕵️️‍♂️Validate backwards compatibility
 
 on:
+  workflow_dispatch:
   pull_request:
     branches:
-      - master
+      - main
+  push:
+    branches:
       - main
 
 jobs:
