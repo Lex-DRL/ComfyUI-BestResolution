@@ -68,6 +68,23 @@ def round_width_and_height_closest_to_the_ratio(width_f: _t_number, height_f: _t
 	return width, n_steps_x, height, n_steps_y
 
 
+def float_width_height_from_area(square_size: _t_number, landscape: bool, aspect_a: float, aspect_b: float):
+	"""The main function for the regular (non-upscale) ``area``-subtype node."""
+	# square_size = 1024; step = 48; landscape = True; aspect_a = 9.0; aspect_b = 16.0
+	aspect_big, aspect_small = aspect_ratios_sorted(aspect_a, aspect_b)
+	aspect_x, aspect_y = (aspect_big, aspect_small) if landscape else (aspect_small, aspect_big)
+
+	aspect_area = aspect_x * aspect_y
+	aspect_norm_scale = 1.0 / _sqrt(aspect_area)
+	aspect_x *= aspect_norm_scale
+	aspect_y *= aspect_norm_scale
+	# Now the two aspects produce a normalized rectangle - i.e., it's area is 1
+
+	width_f: float = aspect_x * square_size
+	height_f: float = aspect_y * square_size
+	return width_f, height_f
+
+
 def _format_report_square_part(
 	width_f: float, height_f: _t_number,
 	width: int, height: int,

@@ -17,7 +17,8 @@ from .node_types import *
 from ._funcs import (
 	aspect_ratios_sorted as _aspect_ratios_sorted,
 	number_to_int as _number_to_int,
-	simple_result_from_approx_wh as _simple_result_from_approx_wh
+	simple_result_from_approx_wh as _simple_result_from_approx_wh,
+	float_width_height_from_area as _float_width_height_from_area
 )
 
 
@@ -95,7 +96,7 @@ _input_types_orient = deepfreeze({
 				"Specifies image orientation:\n\n"
 				"When ON, width is bigger (image is horizontal).\n"
 				"When OFF, height is bigger (image is vertical)."
-			)
+			),
 		}),
 		'aspect_a': (_IO.FLOAT, {
 			'default': 16.0, 'min': 1.0, 'max': _sys.float_info.max, 'step': 1.0, 'round': 0.001,
@@ -198,18 +199,6 @@ class BestResolutionFromArea:
 		return _input_types_area
 
 	def main(self, square_size: int, step: int, landscape: bool, aspect_a: float, aspect_b: float, unique_id: str = None):
-		# square_size = 1024; step = 48; landscape = True; aspect_a = 9.0; aspect_b = 16.0
-		aspect_big, aspect_small = _aspect_ratios_sorted(aspect_a, aspect_b)
-		aspect_x, aspect_y = (aspect_big, aspect_small) if landscape else (aspect_small, aspect_big)
-
-		aspect_area = aspect_x * aspect_y
-		aspect_norm_scale = 1.0 / _sqrt(aspect_area)
-		aspect_x *= aspect_norm_scale
-		aspect_y *= aspect_norm_scale
-		# Now the two aspects produce a normalized rectangle - i.e., it's area is 1
-
-		square_size = _number_to_int(square_size)
-		width_f = aspect_x * square_size
-		height_f = aspect_y * square_size
-
+		square_size: int = _number_to_int(square_size)
+		width_f, height_f = _float_width_height_from_area(square_size, landscape, aspect_a, aspect_b)
 		return _simple_result_from_approx_wh(width_f, height_f, step, unique_id, square_size)
