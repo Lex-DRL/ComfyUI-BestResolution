@@ -1,0 +1,13 @@
+name: 🕵️️‍♂️Validate backwards compatibility
+
+on:
+  pull_request:
+    branches:
+      - master
+      - main
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: comfy-org/node-diff@main
