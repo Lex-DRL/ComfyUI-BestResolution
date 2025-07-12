@@ -6,7 +6,7 @@
 
 A small modular pack - QoL nodes for semi-automatic calculation of the best (most optimal) sampling resolution:
 - ... model-agnostic - i.e., compatible with **ANY** model (from now **or** the future),
-- ... accounting for upscale
+- ... accounting for upscale,
 - ... and for (the essential) pixel-step. 
 
 ![image](img/screenshot1.png)
