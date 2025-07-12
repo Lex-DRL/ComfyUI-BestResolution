@@ -10,6 +10,8 @@ from math import sqrt as _sqrt
 
 from server import PromptServer as _PromptServer
 
+from .enums import *
+
 
 _t_number = _t.Union[int, float]
 
@@ -120,7 +122,7 @@ def _format_report_square_part(
 	return f"~={actual_square_side_f:.2f}🔳"
 
 
-def format_report(
+def format_report_simple(
 	width_f: float, height_f: _t_number, step: int,
 	width: int, n_steps_x: int, height: int, n_steps_y: int,
 	target_square_size: _t_number = None
@@ -143,22 +145,100 @@ def format_report(
 
 
 def simple_result_from_approx_wh(
-	width_f: float, height_f: _t_number, step: int, show: bool = True,
+	width_f: float, height_f: _t_number, step: int,
+	show: bool = True,
 	unique_id: str = None, target_square_size: _t_number = None
 ):
-	"""Final part of the main func for simple (non-upscale) nodes - when desired float/height are already calculated"""
+	"""Final part of the main func for simple (non-upscale) nodes - when desired width/height are already calculated."""
 	step = number_to_int(step)
 	width, n_steps_x, height, n_steps_y = round_width_and_height_closest_to_the_ratio(width_f, height_f, step)
 
-	if unique_id:
-		text = (
-			format_report(width_f, height_f, step, width, n_steps_x, height, n_steps_y, target_square_size)
-			if show
-			# TODO: Planned for the future - currently, there's no point removing the text since it's box is shown anyway
-			else '<span></span>' # An odd workaround since `send_progress_text()` doesn't want to update text when '' passed
-		)
-		# print(f"{unique_id} text: {text!r}")
-		# Snatched from: https://github.com/comfyanonymous/ComfyUI/blob/27870ec3c30e56be9707d89a120eb7f0e2836be1/comfy_extras/nodes_images.py#L581-L582
-		_PromptServer.instance.send_progress_text(text, unique_id)
+	result = (width, height)
 
-	return width, height
+	if not unique_id:
+		return result
+
+	text = (
+		format_report_simple(width_f, height_f, step, width, n_steps_x, height, n_steps_y, target_square_size)
+		if show
+		# TODO: Planned for the future - currently, there's no point removing the text since it's box is shown anyway
+		else '<span></span>' # An odd workaround since `send_progress_text()` doesn't want to update text when '' passed
+	)
+	# print(f"{unique_id} text: {text!r}")
+	# Snatched from: https://github.com/comfyanonymous/ComfyUI/blob/27870ec3c30e56be9707d89a120eb7f0e2836be1/comfy_extras/nodes_images.py#L581-L582
+	_PromptServer.instance.send_progress_text(text, unique_id)
+
+	return result
+
+
+def upscale_result_from_approx_wh(
+	width_f: float, height_f: _t_number, step: int,
+	priority: _t.Union[RoundingPriority, str], upscale: float, up_step:int,
+	show: bool = True,
+	unique_id: str = None, target_square_size: _t_number = None
+):
+	"""Primary part of the main func for nodes with upscaling - when desired initial-width/height are already calculated."""
+	upscale = max(float(upscale), 1.0)
+	up_width_f: float = upscale * width_f
+	up_height_f: float = upscale * height_f
+	width_f = float(width_f)
+
+	step = number_to_int(step)
+	up_step = number_to_int(up_step)
+
+	if priority == RoundingPriority.DESIRED:
+		width, n_steps_x, height, n_steps_y = round_width_and_height_closest_to_the_ratio(width_f, height_f, step)
+		up_width, up_steps_x, up_height, up_steps_y = round_width_and_height_closest_to_the_ratio(
+			up_width_f, up_height_f, up_step
+		)
+	elif priority == RoundingPriority.ORIGINAL:
+		width, n_steps_x, height, n_steps_y = round_width_and_height_closest_to_the_ratio(width_f, height_f, step)
+		up_width, up_steps_x, up_height, up_steps_y = round_width_and_height_closest_to_the_ratio(
+			upscale * width, upscale * height, up_step
+		)
+	else:
+		up_width, up_steps_x, up_height, up_steps_y = round_width_and_height_closest_to_the_ratio(
+			up_width_f, up_height_f, up_step
+		)
+		width, n_steps_x, height, n_steps_y = round_width_and_height_closest_to_the_ratio(
+			float(up_width) / upscale, float(up_height) / upscale, step
+		)
+
+	result = (width, height, up_width, up_height)
+
+	if not unique_id:
+		return result
+
+	# TODO: Planned for the future - currently, there's no point removing the text since it's box is shown anyway
+	text = '<span></span>'  # An odd workaround since `send_progress_text()` doesn't want to update text when '' passed
+	if show:
+		reports: _t.List[str] = list()
+		for prefix, w_f, h_f, s, w, n_x, h, n_y, trg_sq in [
+			('◻️ ', width_f, height_f, step, width, n_steps_x, height, n_steps_y, target_square_size),
+			('🔲 ', up_width_f, up_height_f, up_step, up_width, up_steps_x, up_height, up_steps_y, _sqrt(up_width_f * up_height_f))
+		]:
+			cur_report = format_report_simple(w_f, h_f, s, w, n_x, h, n_y, trg_sq)
+			reports.append('\n'.join(
+				f"{prefix}{x}" for x in cur_report.split('\n')
+			))
+		real_upscale_x = float(up_width) / width
+		real_upscale_y = float(up_height) / height
+
+		# Pixel size relative to the upscaled image:
+		up_half_pixel_x = 0.5 / up_width
+		up_half_pixel_y = 0.5 / up_height
+		# Threshold for upscale-multiplier to be considered the same res:
+		almost_equal_rel_delta_x = real_upscale_x * up_half_pixel_x
+		almost_equal_rel_delta_y = real_upscale_y * up_half_pixel_y
+		almost_equal_rel_delta = max(almost_equal_rel_delta_x, almost_equal_rel_delta_y)
+		if abs(real_upscale_x - real_upscale_y) < almost_equal_rel_delta:
+			# The x/y delta between upscale multipliers is below a threshold to contribute even 1 pixel.
+			# So, basically, the upscale is uniform:
+			divider_line = f"\n--- x{real_upscale_x:.3f} ---\n"
+		else:
+			divider_line = f"\n--- ⚠️ x{real_upscale_x:.3f} / x{real_upscale_y:.3f} ---\n"
+		text = divider_line.join(reports)
+	# Snatched from: https://github.com/comfyanonymous/ComfyUI/blob/27870ec3c30e56be9707d89a120eb7f0e2836be1/comfy_extras/nodes_images.py#L581-L582
+	_PromptServer.instance.send_progress_text(text, unique_id)
+
+	return result
