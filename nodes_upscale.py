@@ -1,0 +1,141 @@
+# encoding: utf-8
+"""
+Advanced versions of nodes - with upscale.
+"""
+
+import typing as _t
+
+from inspect import cleandoc as _cleandoc
+import sys as _sys
+
+from frozendict import deepfreeze as _deepfreeze, frozendict as _frozendict
+
+from comfy.comfy_types.node_typing import IO as _IO
+
+from ._funcs import (
+	aspect_ratios_sorted as _aspect_ratios_sorted,
+	number_to_int as _number_to_int,
+	float_width_height_from_area as _float_width_height_from_area,
+	upscale_result_from_approx_wh as _upscale_result_from_approx_wh
+)
+from .enums import *
+from .node_types import *
+from .nodes_simple import _input_types_area
+
+# ----------------------------------------------------------
+
+_return_types_upscale = (_IO.INT, _IO.INT, _IO.FLOAT, _IO.INT, _IO.INT, _IO.BOOLEAN)
+_return_ttips_upscale = _frozendict({
+	'orig_w': "Width for original/initial image",
+	'orig_h': "Height for original/initial image",
+	'upscale': (
+		"If 'needs_resize' is FALSE, this would be the actual uniform value to scale your initial-res in order "
+		"to get the upscaled-res.\n"
+		"If 'needs_resize' is TRUE, this slot simply outputs the same upscale-value you've set on the node."
+	),
+	'up_w': "Width for the (main) upscaled image",
+	'up_h': "Height for the (main) upscaled image",
+	'needs_resize': (
+		"This will be FALSE if you can get the exact upscaled resolution by simply scaling the initial-res uniformly "
+		"(by the value output into 'upscale' slot).\n\n"
+		"Otherwise, it will be TRUE — indicating that you'll need to do some cropping/out-painting right AFTER "
+		"the actual upscale (increasing the resolution itself) but BEFORE post-upscale sampling (\"HD-fix\")."
+	),
+})
+
+# __priority_type = (_IO.BOOLEAN, {
+# 	'default': True, 'label_on': 'upscaled', 'label_off': 'original',
+# 	'tooltip': (
+# 		"Which of the resolutions is more important to be as close to the desired as possible:\n\n"
+# 		"When ON, the rounded with/height are first calculated for the UPSCALED resolution - and "
+# 		"only then the original ones are back-tracked from them.\n"
+# 		"When OFF, they're first calculated for the ORIGINAL resolution - and "
+# 		"the upscaled ones are tracked forward from them."
+# 	)
+# })
+__priority_type = (
+	RoundingPriority.all_values(),
+	{
+		'default': RoundingPriority.DESIRED.value,
+		'tooltip': (
+			"Defines what resolution to prioritize, as well as which order to perform rounding in:\n\n"
+			"• desired - first, approximate resolutions are calculated for both initial and upscaled size; "
+			"then, both are rounded. In both cases, the rounded resolution is closest to the desired one, "
+			"but aspect ratio might differ the most between sizes.\n\n"
+			"• original - first, initial resolution is calculated and rounded; then, upscaled one is detected from it. "
+			"Upscaled resolution might differ the most from the desired aspect ratio, but it follows the ratio from "
+			"initial size as much as possible.\n\n"
+			"• upscaled - vice versa: first, the rounded upscaled resolution is calculated; then, the initial one "
+			"back-tracked from it."
+		)
+	}
+)
+__extra_inputs_for_upscale_only = {
+	'priority': __priority_type,
+	'upscale': (_IO.FLOAT, {
+		'default': 1.5, 'min': 1.0, 'max': _sys.float_info.max, 'step': 0.25, 'round': 0.001,
+		# 'tooltip': "",  # TODO
+	}),
+	'up_step': (_IO.INT, dict(type_dict_step_upscale1, **{
+		'tooltip': "Same as the main `step`, but for the upscaled resolution.",
+	})),
+}
+
+_input_types_area_upscale = _deepfreeze({
+	'required': dict(
+		(k_v for k_v in _input_types_area['required'].items() if k_v[0] != 'show'),
+		**__extra_inputs_for_upscale_only,
+		# show=_input_types_area['required']['show'],
+	),
+	'hidden': {
+		'unique_id': 'UNIQUE_ID',
+	},
+	# 'optional': {},
+})
+
+
+class BestResolutionFromAreaUpscale:
+	"""
+	The most efficient way of selecting an optimal resolution:
+	image size selected indirectly - by the total desired resolution (area) + aspect ratio...
+
+	... PLUS, account for the immediate upscale right away.
+
+	Desired resolution (aka image area/megapixels/pixel count) is specified with a side of a square image. This isn't
+	accidental: most models disclose what image resolution they're trained on, and usually they're square:
+
+	- SD 1.5 - 512x512 pixels
+	- SDXL - 1024x1024 pixels
+
+	By simply providing this single number and setting your aspect ratio/orientation, you get the width and height to
+	produce the closest total resolution to the training set, while also respecting image proportions and step-rounding.
+	"""
+	NODE_NAME = 'BestResolutionFromAreaUpscale'
+	CATEGORY = "utils/resolution"
+	DESCRIPTION = _cleandoc(__doc__)
+
+	OUTPUT_NODE = True
+
+	FUNCTION = 'main'
+	RETURN_TYPES = _return_types_upscale
+	RETURN_NAMES = tuple(_return_ttips_upscale.keys())
+	OUTPUT_TOOLTIPS = tuple(_return_ttips_upscale.values())
+
+	@classmethod
+	def INPUT_TYPES(cls):
+		return _input_types_area_upscale
+
+	def main(
+		self, square_size: int, step: int, landscape: bool, aspect_a: float, aspect_b: float,
+		priority: _t.Union[RoundingPriority, str], upscale: float, up_step:int,
+		# show: bool,
+		unique_id: str = None
+	):
+		square_size: int = _number_to_int(square_size)
+		width_f, height_f = _float_width_height_from_area(square_size, landscape, aspect_a, aspect_b)
+		return _upscale_result_from_approx_wh(
+			width_f, height_f, step,
+			priority, upscale, up_step,
+			# show,
+			unique_id=unique_id, target_square_size=square_size
+		)

@@ -92,6 +92,17 @@ def float_width_height_from_area(square_size: _t_number, landscape: bool, aspect
 	return width_f, height_f
 
 
+def _show_text_on_node(text: str = None, unique_id: str = None):
+	if not text:
+		# TODO: Planned for the future - currently, there's no point removing the text since it's box is shown anyway
+		# An odd workaround since `send_progress_text()` doesn't want to update text when '' passed
+		text = '<span></span>'
+	# print(f"{unique_id} text: {text!r}")
+
+	# Snatched from: https://github.com/comfyanonymous/ComfyUI/blob/27870ec3c30e56be9707d89a120eb7f0e2836be1/comfy_extras/nodes_images.py#L581-L582
+	_PromptServer.instance.send_progress_text(text, unique_id)
+
+
 def _format_report_square_part(
 	width_f: float, height_f: _t_number,
 	width: int, height: int,
@@ -161,14 +172,27 @@ def simple_result_from_approx_wh(
 	text = (
 		format_report_simple(width_f, height_f, step, width, n_steps_x, height, n_steps_y, target_square_size)
 		if show
-		# TODO: Planned for the future - currently, there's no point removing the text since it's box is shown anyway
-		else '<span></span>' # An odd workaround since `send_progress_text()` doesn't want to update text when '' passed
+		else None
 	)
-	# print(f"{unique_id} text: {text!r}")
-	# Snatched from: https://github.com/comfyanonymous/ComfyUI/blob/27870ec3c30e56be9707d89a120eb7f0e2836be1/comfy_extras/nodes_images.py#L581-L582
-	_PromptServer.instance.send_progress_text(text, unique_id)
-
+	_show_text_on_node(text, unique_id)
 	return result
+
+
+def _need_post_resize(width: int, height: int, up_width: int, up_height: int):
+	"""
+	Detect whether the final init-res CAN NOT be uniformly scaled to the higher res,
+	and thus would require cropping/out-painting.
+	"""
+	real_upscale_x: float = float(up_width) / width
+	real_upscale_y: float = float(up_height) / height
+	real_upscale_avg: float = (real_upscale_x + real_upscale_y) * 0.5
+
+	needs_resize: bool = (
+		round_pos_int(real_upscale_avg * width) != up_width or
+		round_pos_int(real_upscale_avg * height) != up_height
+	)
+	return needs_resize, real_upscale_avg, real_upscale_x, real_upscale_y
+
 
 
 def upscale_result_from_approx_wh(
@@ -204,41 +228,36 @@ def upscale_result_from_approx_wh(
 			float(up_width) / upscale, float(up_height) / upscale, step
 		)
 
-	result = (width, height, up_width, up_height)
+	needs_resize, real_upscale_avg, real_upscale_x, real_upscale_y = _need_post_resize(width, height, up_width, up_height)
+	out_upscale: float = upscale if needs_resize else real_upscale_avg
+
+	result = (width, height, out_upscale, up_width, up_height, needs_resize)
 
 	if not unique_id:
 		return result
 
-	# TODO: Planned for the future - currently, there's no point removing the text since it's box is shown anyway
-	text = '<span></span>'  # An odd workaround since `send_progress_text()` doesn't want to update text when '' passed
-	if show:
-		reports: _t.List[str] = list()
-		for prefix, w_f, h_f, s, w, n_x, h, n_y, trg_sq in [
-			('◻️ ', width_f, height_f, step, width, n_steps_x, height, n_steps_y, target_square_size),
-			('🔲 ', up_width_f, up_height_f, up_step, up_width, up_steps_x, up_height, up_steps_y, _sqrt(up_width_f * up_height_f))
-		]:
-			cur_report = format_report_simple(w_f, h_f, s, w, n_x, h, n_y, trg_sq)
-			reports.append('\n'.join(
-				f"{prefix}{x}" for x in cur_report.split('\n')
-			))
-		real_upscale_x = float(up_width) / width
-		real_upscale_y = float(up_height) / height
+	if not show:
+		_show_text_on_node(None, unique_id)
+		return result
 
-		# Pixel size relative to the upscaled image:
-		up_half_pixel_x = 0.5 / up_width
-		up_half_pixel_y = 0.5 / up_height
-		# Threshold for upscale-multiplier to be considered the same res:
-		almost_equal_rel_delta_x = real_upscale_x * up_half_pixel_x
-		almost_equal_rel_delta_y = real_upscale_y * up_half_pixel_y
-		almost_equal_rel_delta = max(almost_equal_rel_delta_x, almost_equal_rel_delta_y)
-		if abs(real_upscale_x - real_upscale_y) < almost_equal_rel_delta:
-			# The x/y delta between upscale multipliers is below a threshold to contribute even 1 pixel.
-			# So, basically, the upscale is uniform:
-			divider_line = f"\n--- x{real_upscale_x:.3f} ---\n"
-		else:
-			divider_line = f"\n--- ⚠️ x{real_upscale_x:.3f} / x{real_upscale_y:.3f} ---\n"
-		text = divider_line.join(reports)
-	# Snatched from: https://github.com/comfyanonymous/ComfyUI/blob/27870ec3c30e56be9707d89a120eb7f0e2836be1/comfy_extras/nodes_images.py#L581-L582
-	_PromptServer.instance.send_progress_text(text, unique_id)
+	report_parts: _t.List[str] = list()
+	for prefix, w_f, h_f, s, w, n_x, h, n_y, trg_sq in [
+		('◻️ ', width_f, height_f, step, width, n_steps_x, height, n_steps_y, target_square_size),
+		('🔲 ', up_width_f, up_height_f, up_step, up_width, up_steps_x, up_height, up_steps_y, _sqrt(up_width_f * up_height_f))
+	]:
+		cur_report = format_report_simple(w_f, h_f, s, w, n_x, h, n_y, trg_sq)
+		report_parts.append('\n'.join(
+			f"{prefix}{x}" for x in cur_report.split('\n')
+		))
 
+	separator_line: str = (
+		# Real upscale factor in X and Y differ enough so we can't get the up-res from init-res with ANY uniform value:
+		f"\n--- ⚠️ x{real_upscale_x:.3f} / x{real_upscale_y:.3f} ---\n"
+		if needs_resize
+		# The upscale is uniform:
+		else f"\n--- x{real_upscale_x:.3f} ---\n"
+	)
+	text = separator_line.join(report_parts)
+
+	_show_text_on_node(text, unique_id)
 	return result

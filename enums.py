@@ -5,7 +5,10 @@ Internal enums.
 
 import typing as _t
 
-from enum import StrEnum as _StrEnum
+try:
+	from enum import StrEnum as _StrEnum
+except ImportError:
+	from comfy.comfy_types.node_typing import StrEnum as _StrEnum
 
 
 class RoundingPriority(_StrEnum):
