@@ -2,7 +2,7 @@
 """
 """
 
-from .nodes import *
+from .nodes_simple import *
 
 NODE_CLASS_MAPPINGS = {
 	"BestResolutionFromArea": BestResolutionFromArea,
