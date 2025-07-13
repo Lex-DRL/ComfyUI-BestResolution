@@ -19,6 +19,7 @@ from ._funcs import (
 	float_width_height_from_area as _float_width_height_from_area,
 	simple_result_from_approx_wh as _simple_result_from_approx_wh
 )
+from . import _meta
 from .node_types import *
 
 # ----------------------------------------------------------
@@ -62,7 +63,7 @@ class BestResolutionSimple:
 	only rounding performed, desired image size specified directly.
 	"""
 	NODE_NAME = 'BestResolutionSimple'
-	CATEGORY = "utils/resolution"
+	CATEGORY = _meta.category
 	DESCRIPTION = _cleandoc(__doc__)
 
 	OUTPUT_NODE = True
@@ -136,7 +137,7 @@ class BestResolutionFromAspectRatio:
 	image size selected indirectly - by one of the sides + aspect ratio.
 	"""
 	NODE_NAME = 'BestResolutionFromAspectRatio'
-	CATEGORY = "utils/resolution"
+	CATEGORY = _meta.category
 	DESCRIPTION = _cleandoc(__doc__)
 
 	OUTPUT_NODE = True
@@ -212,7 +213,7 @@ class BestResolutionFromArea:
 	produce the closest total resolution to the training set, while also respecting image proportions and step-rounding.
 	"""
 	NODE_NAME = 'BestResolutionFromArea'
-	CATEGORY = "utils/resolution"
+	CATEGORY = _meta.category
 	DESCRIPTION = _cleandoc(__doc__)
 
 	OUTPUT_NODE = True

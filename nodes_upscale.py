@@ -18,6 +18,7 @@ from ._funcs import (
 	float_width_height_from_area as _float_width_height_from_area,
 	upscale_result_from_approx_wh as _upscale_result_from_approx_wh
 )
+from . import _meta
 from .enums import *
 from .node_types import *
 from .nodes_simple import _input_types_area
@@ -85,7 +86,7 @@ class BestResolutionFromAreaUpscale:
 	produce the closest total resolution to the training set, while also respecting image proportions and step-rounding.
 	"""
 	NODE_NAME = 'BestResolutionFromAreaUpscale'
-	CATEGORY = "utils/resolution"
+	CATEGORY = _meta.category
 	DESCRIPTION = _cleandoc(__doc__)
 
 	OUTPUT_NODE = True

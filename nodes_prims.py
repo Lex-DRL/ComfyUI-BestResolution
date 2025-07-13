@@ -9,6 +9,7 @@ from inspect import cleandoc as _cleandoc
 
 from frozendict import deepfreeze as _deepfreeze
 
+from . import _meta
 from .enums import *
 
 # ----------------------------------------------------------
@@ -60,13 +61,13 @@ class BestResolutionPrimResPriority:
 	'priority' selector for "Best Resolution" upscale-nodes.
 	"""
 	NODE_NAME = 'BestResolutionPrimResPriority'
-	CATEGORY = "utils/resolution"
+	CATEGORY = _meta.category
 	DESCRIPTION = _cleandoc(__doc__)
 
 	OUTPUT_NODE = False
 
 	FUNCTION = 'main'
-	RETURN_TYPES = (_res_priority_data_type,)
+	RETURN_TYPES = (_res_priority_data_type, )
 	RETURN_NAMES = ('priority', )
 	# OUTPUT_TOOLTIPS = ('', )
 
