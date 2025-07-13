@@ -194,7 +194,6 @@ def _need_post_resize(width: int, height: int, up_width: int, up_height: int):
 	return needs_resize, real_upscale_avg, real_upscale_x, real_upscale_y
 
 
-
 def upscale_result_from_approx_wh(
 	width_f: float, height_f: _t_number, step: int,
 	priority: _t.Union[RoundingPriority, str], upscale: float, up_step:int,
