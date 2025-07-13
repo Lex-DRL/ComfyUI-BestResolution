@@ -1,7 +1,7 @@
 [project]
 name = "best-resolution"
-description = "QoL nodes for semi-automatic calculation of the best (most optimal) sampling resolution \n• compatible with ANY model (from now or the future), \n• accounting for upscale \n• and pixel-step."
-version = "1.0.1"
+description = "QoL nodes for semi-automatic calculation of the best (most optimal) sampling resolution \n• compatible with ANY model (from now or the future), \n• accounting for upscale... \n• ...and pixel-step."
+version = "1.0.2"
 authors = [
   {name = "Lex Darlog"}
 ]
