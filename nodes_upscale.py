@@ -21,6 +21,7 @@ from ._funcs import (
 from .enums import *
 from .node_types import *
 from .nodes_simple import _input_types_area
+from .nodes_prims import _res_priority_in_type, _res_priority_verify
 
 # ----------------------------------------------------------
 
@@ -43,35 +44,8 @@ _return_ttips_upscale = _frozendict({
 	),
 })
 
-# __priority_type = (_IO.BOOLEAN, {
-# 	'default': True, 'label_on': 'upscaled', 'label_off': 'original',
-# 	'tooltip': (
-# 		"Which of the resolutions is more important to be as close to the desired as possible:\n\n"
-# 		"When ON, the rounded with/height are first calculated for the UPSCALED resolution - and "
-# 		"only then the original ones are back-tracked from them.\n"
-# 		"When OFF, they're first calculated for the ORIGINAL resolution - and "
-# 		"the upscaled ones are tracked forward from them."
-# 	)
-# })
-__priority_type = (
-	RoundingPriority.all_values(),
-	{
-		'default': RoundingPriority.DESIRED.value,
-		'tooltip': (
-			"Defines what resolution to prioritize, as well as which order to perform rounding in:\n\n"
-			"• desired - first, approximate resolutions are calculated for both initial and upscaled size; "
-			"then, both are rounded. In both cases, the rounded resolution is closest to the desired one, "
-			"but aspect ratio might differ the most between sizes.\n\n"
-			"• original - first, initial resolution is calculated and rounded; then, upscaled one is detected from it. "
-			"Upscaled resolution might differ the most from the desired aspect ratio, but it follows the ratio from "
-			"initial size as much as possible.\n\n"
-			"• upscaled - vice versa: first, the rounded upscaled resolution is calculated; then, the initial one "
-			"back-tracked from it."
-		)
-	}
-)
 __extra_inputs_for_upscale_only = {
-	'priority': __priority_type,
+	'priority': _res_priority_in_type,
 	'upscale': (_IO.FLOAT, {
 		'default': 1.5, 'min': 1.0, 'max': _sys.float_info.max, 'step': 0.25, 'round': 0.001,
 		# 'tooltip': "",  # TODO
@@ -135,7 +109,7 @@ class BestResolutionFromAreaUpscale:
 		width_f, height_f = _float_width_height_from_area(square_size, landscape, aspect_a, aspect_b)
 		return _upscale_result_from_approx_wh(
 			width_f, height_f, step,
-			priority, upscale, up_step,
+			_res_priority_verify(priority), upscale, up_step,
 			# show,
 			unique_id=unique_id, target_square_size=square_size
 		)
