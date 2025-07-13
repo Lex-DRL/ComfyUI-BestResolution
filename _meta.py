@@ -3,4 +3,4 @@
 Metadata-related module.
 """
 
-category: str = "utils/resolution"
+category: str = "Best Resolution"
