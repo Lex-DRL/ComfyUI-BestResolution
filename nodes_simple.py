@@ -9,7 +9,7 @@ from inspect import cleandoc as _cleandoc
 from math import sqrt as _sqrt
 import sys as _sys
 
-from frozendict import deepfreeze, frozendict
+from frozendict import deepfreeze as _deepfreeze
 
 from comfy.comfy_types.node_typing import IO as _IO
 
@@ -17,16 +17,19 @@ from ._funcs import (
 	aspect_ratios_sorted as _aspect_ratios_sorted,
 	number_to_int as _number_to_int,
 	float_width_height_from_area as _float_width_height_from_area,
-	simple_result_from_approx_wh as _simple_result_from_approx_wh,
-	upscale_result_from_approx_wh as _upscale_result_from_approx_wh
+	simple_result_from_approx_wh as _simple_result_from_approx_wh
 )
-from .enums import *
 from .node_types import *
 
 # ----------------------------------------------------------
 
+# _return_types_simple = (_IO.INT, _IO.INT, _IO.STRING)
+# _return_names_simple = ('width', 'height', 'report')
+_return_types_simple = (_IO.INT, _IO.INT)
+_return_names_simple = ('width', 'height')
+
 # A tiny optimization by reusing the same immutable dict:
-_input_types_simple = deepfreeze({
+_input_types_simple = _deepfreeze({
 	'required': {
 		'width': (_IO.INT, dict(type_dict_res, **{'tooltip': "Approximate width"})),
 		'height': (_IO.INT, dict(type_dict_res, **{'tooltip': "Approximate height"})),
@@ -52,11 +55,6 @@ _input_types_simple = deepfreeze({
 	# 'optional': {},
 })
 
-# _return_types_simple = (_IO.INT, _IO.INT, _IO.STRING)
-# _return_names_simple = ('width', 'height', 'report')
-_return_types_simple = (_IO.INT, _IO.INT)
-_return_names_simple = ('width', 'height')
-
 
 class BestResolutionSimple:
 	"""
@@ -71,7 +69,7 @@ class BestResolutionSimple:
 
 	FUNCTION = 'main'
 	RETURN_TYPES = _return_types_simple
-	# RETURN_TYPES_TOOLTIPS = {}
+	# OUTPUT_TOOLTIPS = {}
 	RETURN_NAMES = _return_names_simple
 
 	@classmethod
@@ -97,7 +95,7 @@ _tooltip_aspect = (
 	"The specified aspect ratio is APPROXIMATE: step parameter has priority over the exact image proportions."
 )
 
-_input_types_orient = deepfreeze({
+_input_types_orient = _deepfreeze({
 	'required': {
 		'size': (_IO.INT, dict(type_dict_res, **{'tooltip': (
 			"Approximate size of one of the image sides.\nWhich one - see the 'size_is_big' and 'landscape' toggles."
@@ -177,7 +175,7 @@ class BestResolutionFromAspectRatio:
 
 # ----------------------------------------------------------
 
-_input_types_area = deepfreeze({
+_input_types_area = _deepfreeze({
 	'required': {
 		'square_size': (_IO.INT, dict(type_dict_res, **{'tooltip': (
 			"The total resolution of the image would be the same as of a square with this side.\n"
