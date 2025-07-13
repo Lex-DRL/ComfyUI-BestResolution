@@ -11,7 +11,7 @@ A small modular pack — QoL nodes for semi-automatic calculation of the best (m
 
 ![image](img/screenshot1.png)
 
-> [!IMPORTANT]
+> [!NOTE]
 > Nodes from this pack do **nothing** with actual images on their own — they only calculate the optimal **values** for the resolution.
 
 Read any further only if you feel you need to.
