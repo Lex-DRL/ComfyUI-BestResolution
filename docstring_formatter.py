@@ -10,6 +10,15 @@ import re as _re
 
 _re_indent_match = _re.compile("(\t*)( +)(\t*)(.*?)$").match
 _re_tab_indent_match = _re.compile("(\t+)(.*?)$").match
+_re_list_line_match = _re.compile(
+	"(\s*)("
+	"[-*•]+"
+	"|"
+	"[a-zA-Z]\s*[.)]"
+	"|"
+	"[0-9+]\s*[.)]"
+	")\s+"
+).match
 
 
 def _recover_tab_indents(line: str, tab_size: int):
@@ -57,15 +66,17 @@ def _join_paragraph_and_format_tabs(paragraph: _t.List[str], tab_size: int):
 			tab_indent, chunk = match.groups()  # We've detected indent. Now, get rid of it.
 			cur_indent = len(tab_indent)
 
-		if cur_indent == pending_indent:
+		match_list_line = _re_list_line_match(chunk)
+		# In case of a bulleted/numbered list, we'll need to start a new block, too.
+		if cur_indent == pending_indent and not match_list_line:
 			pending_chunks.append(chunk)
 			continue
 
-		# Indent mismatch - we're either ended one block or entered another. Either way, the previous block ends.
+		# Indent mismatch or a list line:
+		# we're either ended one block or entered another. Either way, the previous block ends.
 		if pending_chunks:
 			yield join_pending_chunks()
 			pending_chunks = list()
-
 		assert not pending_chunks
 		pending_chunks.append(chunk)
 		pending_indent = cur_indent
