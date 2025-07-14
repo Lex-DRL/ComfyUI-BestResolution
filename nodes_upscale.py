@@ -20,7 +20,7 @@ from ._funcs import (
 )
 from . import _meta
 from .enums import *
-from .node_types import *
+from .slot_types import *
 from .nodes_simple import _input_types_area
 from .nodes_prims import _res_priority_in_type, _res_priority_verify
 

@@ -20,7 +20,7 @@ from ._funcs import (
 	simple_result_from_approx_wh as _simple_result_from_approx_wh
 )
 from . import _meta
-from .node_types import *
+from .slot_types import *
 
 # ----------------------------------------------------------
 
