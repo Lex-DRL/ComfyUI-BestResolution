@@ -230,7 +230,7 @@ def upscale_result_from_approx_wh(
 	needs_resize, real_upscale_avg, real_upscale_x, real_upscale_y = _need_post_resize(width, height, up_width, up_height)
 	out_upscale: float = upscale if needs_resize else real_upscale_avg
 
-	result = (width, height, out_upscale, up_width, up_height, needs_resize)
+	result = (out_upscale, width, height, up_width, up_height, needs_resize)
 
 	if not unique_id:
 		return result

@@ -29,15 +29,15 @@ from .slot_types import (
 
 # ----------------------------------------------------------
 
-_return_types_upscale = (_IO.INT, _IO.INT, _IO.FLOAT, _IO.INT, _IO.INT, _IO.BOOLEAN)
+_return_types_upscale = (_IO.FLOAT, _IO.INT, _IO.INT, _IO.INT, _IO.INT, _IO.BOOLEAN)
 _return_ttips_upscale = _frozendict({
-	'orig_w': "Width for original/initial image",
-	'orig_h': "Height for original/initial image",
 	'upscale': (
 		"If 'needs_resize' is FALSE, this would be the actual uniform value to scale your initial-res in order "
 		"to get the upscaled-res.\n"
 		"If 'needs_resize' is TRUE, this slot simply outputs the same upscale-value you've set on the node."
 	),
+	'orig_w': "Width for original/initial image",
+	'orig_h': "Height for original/initial image",
 	'up_w': "Width for the (main) upscaled image",
 	'up_h': "Height for the (main) upscaled image",
 	'needs_resize': (
