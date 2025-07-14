@@ -15,6 +15,7 @@ NODE_CLASS_MAPPINGS: _t.Dict[str, type] = {
 	"BestResolutionSimple": BestResolutionSimple,
 
 	"BestResolutionPrimResPriority": BestResolutionPrimResPriority,
+	"BestResolutionPrimUpStrategy": BestResolutionPrimUpStrategy,
 }
 NODE_DISPLAY_NAME_MAPPINGS: _t.Dict[str, str] = {
 	"BestResolutionFromArea": "Best-Res (area)",
@@ -23,6 +24,7 @@ NODE_DISPLAY_NAME_MAPPINGS: _t.Dict[str, str] = {
 	"BestResolutionSimple": "Best-Res (simple)",
 
 	"BestResolutionPrimResPriority": "Priority (Best-Res)",
+	"BestResolutionPrimUpStrategy": "Upscale Strategy (Best-Res)",
 }
 
 __all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS"]

@@ -16,17 +16,6 @@ from .enums import *
 
 _res_priority_data_type = RoundingPriority.all_values()
 _res_priority_data_type_set = set(_res_priority_data_type)
-
-# _priority_in_type = (_IO.BOOLEAN, {
-# 	'default': True, 'label_on': 'upscaled', 'label_off': 'original',
-# 	'tooltip': (
-# 		"Which of the resolutions is more important to be as close to the desired as possible:\n\n"
-# 		"When ON, the rounded with/height are first calculated for the UPSCALED resolution - and "
-# 		"only then the original ones are back-tracked from them.\n"
-# 		"When OFF, they're first calculated for the ORIGINAL resolution - and "
-# 		"the upscaled ones are tracked forward from them."
-# 	)
-# })
 _res_priority_in_type = (
 	_res_priority_data_type,
 	{
@@ -41,19 +30,24 @@ _res_priority_in_type = (
 			"initial size as much as possible.\n\n"
 			"• upscaled - vice versa: first, the rounded upscaled resolution is calculated; then, the initial one "
 			"back-tracked from it."
-		)
+		),
 	}
 )
-
-_input_types_prim_priority = _deepfreeze({
+_input_types_res_priority = _deepfreeze({
 	'required': {
-		'priority': _res_priority_in_type
+		'priority': _res_priority_in_type,
 	},
 	# 'hidden': {
 	# 	'unique_id': 'UNIQUE_ID',
 	# },
 	# 'optional': {},
 })
+
+
+def _res_priority_verify(priority: _t.Union[RoundingPriority, str]) -> str:
+	if priority not in _res_priority_data_type_set:
+		raise ValueError(f"Invalid value for resolution priority: {priority!r}\nExpected one of: {_res_priority_data_type!r}")
+	return str(priority)
 
 
 class BestResolutionPrimResPriority:
@@ -73,7 +67,7 @@ class BestResolutionPrimResPriority:
 
 	@classmethod
 	def INPUT_TYPES(cls):
-		return _input_types_prim_priority
+		return _input_types_res_priority
 
 	def main(
 		self, priority: _t.Union[RoundingPriority, str],
@@ -82,8 +76,65 @@ class BestResolutionPrimResPriority:
 	):
 		return (_res_priority_verify(priority), )
 
+# ----------------------------------------------------------
 
-def _res_priority_verify(priority: _t.Union[RoundingPriority, str]) -> str:
-	if priority not in _res_priority_data_type_set:
-		raise ValueError(f"Invalid value for resolution priority: {priority!r}\nExpected one of: {_res_priority_data_type!r}")
-	return str(priority)
+_up_strategy_data_type = UpscaleTweakStrategy.all_values()
+_up_strategy_data_type_set = set(_up_strategy_data_type)
+_up_strategy_in_type = (
+	_up_strategy_data_type,
+	{
+		'default': UpscaleTweakStrategy.PAD.value,
+		'tooltip': (
+			"If the upscaled resolution can't be achieved by uniform scaling of the initial-res, "
+			"how to tweak the image to get there:\n\n"
+			"• pad - upscale the image to fit it into the desired frame on one side, "
+			"then add missing pixels on the other one for outpaint.\n"
+			"• crop - upscale the image to fill the entire frame, then crop extra pixels on one side.\n"
+			"• nearest - automatically choose one of the above, to crop/pad the least number of pixels.\n"
+			"• exact-upscale - follow the provided upscale-value precisely. This is the only option that uses it. "
+			"Also, it's the only one that might require both outpainting and crop."
+		),
+	}
+)
+_input_types_up_strategy = _deepfreeze({
+	'required': {
+		'strategy': _up_strategy_in_type,
+	},
+	# 'hidden': {
+	# 	'unique_id': 'UNIQUE_ID',
+	# },
+	# 'optional': {},
+})
+
+
+def _up_strategy_verify(strategy: _t.Union[RoundingPriority, str]) -> str:
+	if strategy not in _up_strategy_data_type_set:
+		raise ValueError(f"Invalid value for upscale strategy: {strategy!r}\nExpected one of: {_up_strategy_data_type!r}")
+	return str(strategy)
+
+
+class BestResolutionPrimUpStrategy:
+	"""
+	'strategy' selector for "Upscale Tweaks" node in "Best Resolution" pack.
+	"""
+	NODE_NAME = 'BestResolutionPrimUpStrategy'
+	CATEGORY = _meta.category
+	DESCRIPTION = _cleandoc(__doc__)
+
+	OUTPUT_NODE = False
+
+	FUNCTION = 'main'
+	RETURN_TYPES = (_up_strategy_data_type, )
+	RETURN_NAMES = ('strategy', )
+	# OUTPUT_TOOLTIPS = ('', )
+
+	@classmethod
+	def INPUT_TYPES(cls):
+		return _input_types_up_strategy
+
+	def main(
+		self, strategy: _t.Union[RoundingPriority, str],
+		# show: bool,
+		# unique_id: str = None
+	):
+		return (_up_strategy_verify(strategy), )
