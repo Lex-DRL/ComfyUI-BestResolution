@@ -7,6 +7,8 @@ import typing as _t
 
 import sys as _sys
 
+from comfy.comfy_types.node_typing import IO as _IO
+
 
 def number_type_dict(default: int = 512, min: int = 1, max: int = _sys.maxsize, step: int = 1) -> _t.Dict[str, int]:
 	"""Prepare type-dict for an input int/float parameter."""
@@ -20,6 +22,11 @@ def number_type_dict(default: int = 512, min: int = 1, max: int = _sys.maxsize, 
 	}
 
 
+type_dict_res = number_type_dict(1024)
 type_dict_step_init = number_type_dict(48)
 type_dict_step_upscale1 = number_type_dict(128)
-type_dict_res = number_type_dict(1024)
+
+upscale_in_type = (_IO.FLOAT, {
+	'default': 1.5, 'min': 1.0, 'max': _sys.float_info.max, 'step': 0.25, 'round': 0.001,
+	# 'tooltip': "",  # TODO
+})

@@ -20,9 +20,12 @@ from ._funcs import (
 )
 from . import _meta
 from .enums import *
-from .slot_types import *
 from .nodes_simple import _input_types_area
 from .nodes_prims import _res_priority_in_type, _res_priority_verify
+from .slot_types import (
+	type_dict_step_upscale1 as _type_dict_step_upscale1,
+	upscale_in_type as _upscale_in_type
+)
 
 # ----------------------------------------------------------
 
@@ -47,11 +50,8 @@ _return_ttips_upscale = _frozendict({
 
 __extra_inputs_for_upscale_only = {
 	'priority': _res_priority_in_type,
-	'upscale': (_IO.FLOAT, {
-		'default': 1.5, 'min': 1.0, 'max': _sys.float_info.max, 'step': 0.25, 'round': 0.001,
-		# 'tooltip': "",  # TODO
-	}),
-	'up_step': (_IO.INT, dict(type_dict_step_upscale1, **{
+	'upscale': _upscale_in_type,
+	'up_step': (_IO.INT, dict(_type_dict_step_upscale1, **{
 		'tooltip': "Same as the main `step`, but for the upscaled resolution.",
 	})),
 }
