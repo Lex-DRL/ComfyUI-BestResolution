@@ -9,6 +9,7 @@
 ⚠️ Active `TODO:`
 - Add `upscale` versions for `simple` and `ratio` nodes, too.
 - Add options for `crop/pad` node - to determine the order of [crop/pad] -> upscale -> [crop/pad].
+- Add node for auto-detecting USDU-padding from initial res.
 
 # V1.1.0
 
