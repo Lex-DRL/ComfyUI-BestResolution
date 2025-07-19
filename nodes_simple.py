@@ -20,6 +20,7 @@ from ._funcs import (
 	simple_result_from_approx_wh as _simple_result_from_approx_wh
 )
 from . import _meta
+from .docstring_formatter import format_docstring as _format_docstring
 from .slot_types import (
 	type_dict_res as _type_dict_res,
 	type_dict_step_init as _type_dict_step_init
@@ -67,7 +68,7 @@ class BestResolutionSimple:
 	"""
 	NODE_NAME = 'BestResolutionSimple'
 	CATEGORY = _meta.category
-	DESCRIPTION = _cleandoc(__doc__)
+	DESCRIPTION = _format_docstring(_cleandoc(__doc__))
 
 	OUTPUT_NODE = True
 
@@ -141,7 +142,7 @@ class BestResolutionFromAspectRatio:
 	"""
 	NODE_NAME = 'BestResolutionFromAspectRatio'
 	CATEGORY = _meta.category
-	DESCRIPTION = _cleandoc(__doc__)
+	DESCRIPTION = _format_docstring(_cleandoc(__doc__))
 
 	OUTPUT_NODE = True
 
@@ -206,18 +207,19 @@ class BestResolutionFromArea:
 	The most efficient way of selecting an optimal resolution:
 	image size selected indirectly - by the total desired resolution (area) + aspect ratio.
 
+
 	Desired resolution (aka image area/megapixels/pixel count) is specified with a side of a square image. This isn't
 	accidental: most models disclose what image resolution they're trained on, and usually they're square:
-
 	- SD 1.5 - 512x512 pixels
 	- SDXL - 1024x1024 pixels
+
 
 	By simply providing this single number and setting your aspect ratio/orientation, you get the width and height to
 	produce the closest total resolution to the training set, while also respecting image proportions and step-rounding.
 	"""
 	NODE_NAME = 'BestResolutionFromArea'
 	CATEGORY = _meta.category
-	DESCRIPTION = _cleandoc(__doc__)
+	DESCRIPTION = _format_docstring(_cleandoc(__doc__))
 
 	OUTPUT_NODE = True
 

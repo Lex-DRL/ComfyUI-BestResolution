@@ -10,6 +10,10 @@ from inspect import cleandoc as _cleandoc
 from frozendict import deepfreeze as _deepfreeze
 
 from . import _meta
+from .docstring_formatter import (
+	format_docstring as _format_docstring,
+	format_object_docstring as _format_object_docstring
+)
 from .enums import *
 
 # ----------------------------------------------------------
@@ -20,17 +24,7 @@ _res_priority_in_type = (
 	_res_priority_data_type,
 	{
 		'default': RoundingPriority.DESIRED.value,
-		'tooltip': (
-			"Defines what resolution to prioritize, as well as which order to perform rounding in:\n\n"
-			"• desired - first, approximate resolutions are calculated for both initial and upscaled size; "
-			"then, both are rounded. In both cases, the rounded resolution is closest to the desired one, "
-			"but aspect ratio might differ the most between sizes.\n\n"
-			"• original - first, initial resolution is calculated and rounded; then, upscaled one is detected from it. "
-			"Upscaled resolution might differ the most from the desired aspect ratio, but it follows the ratio from "
-			"initial size as much as possible.\n\n"
-			"• upscaled - vice versa: first, the rounded upscaled resolution is calculated; then, the initial one "
-			"back-tracked from it."
-		),
+		'tooltip': _format_object_docstring(RoundingPriority),
 	}
 )
 _input_types_res_priority = _deepfreeze({
@@ -56,7 +50,7 @@ class BestResolutionPrimResPriority:
 	"""
 	NODE_NAME = 'BestResolutionPrimResPriority'
 	CATEGORY = _meta.category
-	DESCRIPTION = _cleandoc(__doc__)
+	DESCRIPTION = _format_docstring(_cleandoc(__doc__))
 
 	OUTPUT_NODE = False
 
@@ -78,22 +72,13 @@ class BestResolutionPrimResPriority:
 
 # ----------------------------------------------------------
 
-_up_strategy_data_type = UpscaleTweakStrategy.all_values()
+_up_strategy_data_type = UpscaledCropPadStrategy.all_values()
 _up_strategy_data_type_set = set(_up_strategy_data_type)
 _up_strategy_in_type = (
 	_up_strategy_data_type,
 	{
-		'default': UpscaleTweakStrategy.PAD.value,
-		'tooltip': (
-			"If the upscaled resolution can't be achieved by uniform scaling of the initial-res, "
-			"how to tweak the image to get there:\n\n"
-			"• pad - upscale the image to fit it into the desired frame on one side, "
-			"then add missing pixels on the other one for outpaint.\n"
-			"• crop - upscale the image to fill the entire frame, then crop extra pixels on one side.\n"
-			"• nearest - automatically choose one of the above, to crop/pad the least number of pixels.\n"
-			"• exact-upscale - follow the provided upscale-value precisely. This is the only option that uses it. "
-			"Also, it's the only one that might require both outpainting and crop."
-		),
+		'default': UpscaledCropPadStrategy.PAD.value,
+		'tooltip': _format_object_docstring(UpscaledCropPadStrategy),
 	}
 )
 _input_types_up_strategy = _deepfreeze({
@@ -115,11 +100,11 @@ def _up_strategy_verify(strategy: _t.Union[RoundingPriority, str]) -> str:
 
 class BestResolutionPrimUpStrategy:
 	"""
-	'strategy' selector for "Upscale Tweaks" node in "Best Resolution" pack.
+	'strategy' selector for "Upscaled Crop/Pad" node in "Best Resolution" pack.
 	"""
 	NODE_NAME = 'BestResolutionPrimUpStrategy'
 	CATEGORY = _meta.category
-	DESCRIPTION = _cleandoc(__doc__)
+	DESCRIPTION = _format_docstring(_cleandoc(__doc__))
 
 	OUTPUT_NODE = False
 

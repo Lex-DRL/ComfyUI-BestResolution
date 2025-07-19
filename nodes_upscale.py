@@ -19,6 +19,7 @@ from ._funcs import (
 	upscale_result_from_approx_wh as _upscale_result_from_approx_wh
 )
 from . import _meta
+from .docstring_formatter import format_docstring as _format_docstring
 from .enums import *
 from .nodes_simple import _input_types_area
 from .nodes_prims import _res_priority_in_type, _res_priority_verify
@@ -76,18 +77,19 @@ class BestResolutionFromAreaUpscale:
 
 	... PLUS, account for the immediate upscale right away.
 
+
 	Desired resolution (aka image area/megapixels/pixel count) is specified with a side of a square image. This isn't
 	accidental: most models disclose what image resolution they're trained on, and usually they're square:
-
 	- SD 1.5 - 512x512 pixels
 	- SDXL - 1024x1024 pixels
+
 
 	By simply providing this single number and setting your aspect ratio/orientation, you get the width and height to
 	produce the closest total resolution to the training set, while also respecting image proportions and step-rounding.
 	"""
 	NODE_NAME = 'BestResolutionFromAreaUpscale'
 	CATEGORY = _meta.category
-	DESCRIPTION = _cleandoc(__doc__)
+	DESCRIPTION = _format_docstring(_cleandoc(__doc__))
 
 	OUTPUT_NODE = True
 
