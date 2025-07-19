@@ -1,3 +1,8 @@
+# V1.1.1
+
+- This `CHANGELOG.md` file.
+- Prim-node rename (class and internal name, too): `Upscale Strategy (Best-Res)` -> `Crop-Pad Strategy (Best-Res)`
+
 # V1.1.0
 
 The minimally-complete version (full workflow coverage for my own use-case).

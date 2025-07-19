@@ -98,11 +98,11 @@ def _up_strategy_verify(strategy: _t.Union[RoundingPriority, str]) -> str:
 	return str(strategy)
 
 
-class BestResolutionPrimUpStrategy:
+class BestResolutionPrimCropPadStrategy:
 	"""
 	'strategy' selector for "Upscaled Crop/Pad" node in "Best Resolution" pack.
 	"""
-	NODE_NAME = 'BestResolutionPrimUpStrategy'
+	NODE_NAME = 'BestResolutionPrimCropPadStrategy'
 	CATEGORY = _meta.category
 	DESCRIPTION = _format_docstring(_cleandoc(__doc__))
 
