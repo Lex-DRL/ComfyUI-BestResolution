@@ -30,3 +30,6 @@ upscale_in_type = (_IO.FLOAT, {
 	'default': 1.5, 'min': 1.0, 'max': _sys.float_info.max, 'step': 0.25, 'round': 0.001,
 	# 'tooltip': "",  # TODO
 })
+rel_pos_in_type = (_IO.FLOAT, {
+	'default': 0.5, 'min': 0.0, 'max': 1.0, 'step': 0.125, 'round': 0.0001,
+})
