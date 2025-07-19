@@ -7,7 +7,9 @@
 A small modular pack — nodes for semi-automatic calculation of the best (most optimal) sampling resolution:
 - ... model-agnostic — i.e., compatible with **ANY** model (from now **or** the future),
 - ... accounting for upscale,
-- ... and for (the essential) pixel-step. 
+- ... and for (the essential) pixel-step.
+
+[🔄 Updates ChangeLog](CHANGELOG.md)
 
 ![image](img/screenshot1.png)
 
