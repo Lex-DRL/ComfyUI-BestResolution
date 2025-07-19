@@ -228,10 +228,7 @@ def upscale_result_from_approx_wh(
 			float(up_width) / upscale, float(up_height) / upscale, step
 		)
 
-	needs_resize, real_upscale_avg, real_upscale_x, real_upscale_y = _need_post_resize(width, height, up_width, up_height)
-	out_upscale: float = upscale if needs_resize else real_upscale_avg
-
-	result = ResultUpscaled(out_upscale, width, height, up_width, up_height, needs_resize)
+	result = ResultUpscaled(upscale, width, height, up_width, up_height)
 
 	if not unique_id:
 		return result
@@ -250,12 +247,14 @@ def upscale_result_from_approx_wh(
 			f"{prefix}{x}" for x in cur_report.split('\n')
 		))
 
+	needs_resize, real_upscale_avg, real_upscale_x, real_upscale_y = _need_post_resize(width, height, up_width, up_height)
+
 	separator_line: str = (
 		# Real upscale factor in X and Y differ enough so we can't get the up-res from init-res with ANY uniform value:
 		f"\n--- ⚠️ x{real_upscale_x:.3f} / x{real_upscale_y:.3f} ---\n"
 		if needs_resize
 		# The upscale is uniform:
-		else f"\n--- x{real_upscale_x:.3f} ---\n"
+		else f"\n--- x{real_upscale_avg:.3f} ---\n"
 	)
 	text = separator_line.join(report_parts)
 

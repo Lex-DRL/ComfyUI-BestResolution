@@ -30,23 +30,13 @@ from .slot_types import (
 
 # ----------------------------------------------------------
 
-_return_types_upscale = (_IO.FLOAT, _IO.INT, _IO.INT, _IO.INT, _IO.INT, _IO.BOOLEAN)
+_return_types_upscale = (_IO.FLOAT, _IO.INT, _IO.INT, _IO.INT, _IO.INT)
 _return_ttips_upscale = _frozendict({
-	'upscale': (
-		"If 'needs_resize' is FALSE, this would be the actual uniform value to scale your initial-res in order "
-		"to get the upscaled-res.\n"
-		"If 'needs_resize' is TRUE, this slot simply outputs the same upscale-value you've set on the node."
-	),
+	'upscale': "Simply outputs the same upscale-value you've set on the node.",
 	'orig_w': "Width for original/initial image",
 	'orig_h': "Height for original/initial image",
 	'up_w': "Width for the (main) upscaled image",
 	'up_h': "Height for the (main) upscaled image",
-	'needs_resize': (
-		"This will be FALSE if you can get the exact upscaled resolution by simply scaling the initial-res uniformly "
-		"(by the value output into 'upscale' slot).\n\n"
-		"Otherwise, it will be TRUE — indicating that you'll need to do some cropping/out-painting right AFTER "
-		"the actual upscale (increasing the resolution itself) but BEFORE post-upscale sampling (\"HD-fix\")."
-	),
 })
 
 __extra_inputs_for_upscale_only = {

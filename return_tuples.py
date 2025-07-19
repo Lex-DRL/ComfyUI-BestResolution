@@ -19,7 +19,6 @@ class ResultUpscaled(_t.NamedTuple):
 	orig_height: int
 	up_width: int
 	up_height: int
-	needs_resize: bool
 
 
 class ResultUpscaledCropPad(_t.NamedTuple):
