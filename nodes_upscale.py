@@ -32,18 +32,27 @@ from .slot_types import (
 
 _return_types_upscale = (_IO.FLOAT, _IO.INT, _IO.INT, _IO.INT, _IO.INT)
 _return_ttips_upscale = _frozendict({
-	'upscale': "Simply outputs the same upscale-value you've set on the node.",
-	'orig_w': "Width for original/initial image",
-	'orig_h': "Height for original/initial image",
-	'up_w': "Width for the (main) upscaled image",
-	'up_h': "Height for the (main) upscaled image",
+	'upscale': (
+		"If the HD resolution can be achieved by uniformly scaling the initial one "
+		"(there is \"✅\" and not \"⚠️\" in the upscale-line of the status message), "
+		"outputs this precise upscale-value (might be different from the one originally set on the node itself).\n\n"
+		"Otherwise, outputs the original upscale-value intact.\n"
+		"In this case, you shouldn't use it directly and instead should pass it "
+		"to the \"Upscaled Crop/Pad (Best-Res)\" node and use the upscale-output from it.\n\n"
+		"In both cases, it won't hurt to use the \"Upscaled Crop/Pad (Best-Res)\" node and just rely "
+		"on it's `do_crop` and `do_padding` toggle-outputs."
+	),
+	'init_width': "Width for original/initial image",
+	'init_height': "Height for original/initial image",
+	'HD_width': "Width for the (main/upscaled) HD-image",
+	'HD_height': "Height for the (main/upscaled) HD-image",
 })
 
 __extra_inputs_for_upscale_only = {
 	'priority': _res_priority_in_type,
 	'upscale': _upscale_in_type,
-	'up_step': (_IO.INT, dict(_type_dict_step_upscale1, **{
-		'tooltip': "Same as the main `step`, but for the upscaled resolution.",
+	'HD_step': (_IO.INT, dict(_type_dict_step_upscale1, **{
+		'tooltip': "Same as the main `step`, but for the upscaled resolution.\n144 = 8 * 2 * 3 * 3",
 	})),
 }
 
@@ -94,7 +103,7 @@ class BestResolutionFromAreaUpscale:
 
 	def main(
 		self, square_size: int, step: int, landscape: bool, aspect_a: float, aspect_b: float,
-		priority: _t.Union[RoundingPriority, str], upscale: float, up_step:int,
+		priority: _t.Union[RoundingPriority, str], upscale: float, HD_step:int,
 		# show: bool,
 		unique_id: str = None
 	):
@@ -102,7 +111,7 @@ class BestResolutionFromAreaUpscale:
 		width_f, height_f = _float_width_height_from_area(square_size, landscape, aspect_a, aspect_b)
 		return _upscale_result_from_approx_wh(
 			width_f, height_f, step,
-			_res_priority_verify(priority), upscale, up_step,
+			_res_priority_verify(priority), upscale, HD_step,
 			# show,
 			unique_id=unique_id, target_square_size=square_size
 		)

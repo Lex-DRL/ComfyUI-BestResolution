@@ -15,8 +15,8 @@ NODE_CLASS_MAPPINGS: _t.Dict[str, type] = {
 	"BestResolutionFromAspectRatio": BestResolutionFromAspectRatio,
 	"BestResolutionSimple": BestResolutionSimple,
 
+	"BestResolutionPrimCropPadStrategy": BestResolutionPrimCropPadStrategy,
 	"BestResolutionPrimResPriority": BestResolutionPrimResPriority,
-	"BestResolutionPrimUpStrategy": BestResolutionPrimUpStrategy,
 
 	"BestResolutionUpscaledCropPad": BestResolutionUpscaledCropPad,
 }
@@ -26,8 +26,8 @@ NODE_DISPLAY_NAME_MAPPINGS: _t.Dict[str, str] = {
 	"BestResolutionFromAspectRatio": "Best-Res (ratio)",
 	"BestResolutionSimple": "Best-Res (simple)",
 
+	"BestResolutionPrimCropPadStrategy": "Crop-Pad Strategy (Best-Res)",
 	"BestResolutionPrimResPriority": "Priority (Best-Res)",
-	"BestResolutionPrimUpStrategy": "Upscale Strategy (Best-Res)",
 
 	"BestResolutionUpscaledCropPad": "Upscaled Crop/Pad (Best-Res)",
 }

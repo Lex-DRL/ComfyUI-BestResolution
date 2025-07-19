@@ -15,10 +15,10 @@ class ResultSimple(_t.NamedTuple):
 class ResultUpscaled(_t.NamedTuple):
 	"""Returned NamedTuple for nodes with upscaling."""
 	upscale: float
-	orig_width: int
-	orig_height: int
-	up_width: int
-	up_height: int
+	init_width: int
+	init_height: int
+	hd_width: int
+	hd_height: int
 
 
 class ResultUpscaledCropPad(_t.NamedTuple):

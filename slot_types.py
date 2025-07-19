@@ -23,8 +23,8 @@ def number_type_dict(default: int = 512, min: int = 1, max: int = _sys.maxsize, 
 
 
 type_dict_res = number_type_dict(1024)
-type_dict_step_init = number_type_dict(48)
-type_dict_step_upscale1 = number_type_dict(128)
+type_dict_step_init = number_type_dict(8*2*3)
+type_dict_step_upscale1 = number_type_dict(8*2*3*3)
 
 upscale_in_type = (_IO.FLOAT, {
 	'default': 1.5, 'min': 1.0, 'max': _sys.float_info.max, 'step': 0.25, 'round': 0.001,
@@ -32,4 +32,5 @@ upscale_in_type = (_IO.FLOAT, {
 })
 rel_pos_in_type = (_IO.FLOAT, {
 	'default': 0.5, 'min': 0.0, 'max': 1.0, 'step': 0.125, 'round': 0.0001,
+	# 'display': 'slider', # Cosmetic only: display as 'number' or 'slider'
 })

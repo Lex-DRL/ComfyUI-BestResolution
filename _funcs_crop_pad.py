@@ -19,10 +19,10 @@ class _CropPadInput:
 	"""
 	upscale: float
 
-	orig_w: int
-	orig_h: int
-	up_w: int
-	up_h: int
+	init_w: int
+	init_h: int
+	hd_w: int
+	hd_h: int
 
 	strategy: str
 	align_x: float
@@ -36,14 +36,14 @@ def _upscaled_crop_xy_offset(extra_w: int, extra_h: int, align_x: float, align_y
 
 
 def _upscaled_crop(_in: _CropPadInput, real_upscale: float) -> ResultUpscaledCropPad:
-	raw_upscaled_w = _round_pos_int(real_upscale * _in.orig_w)
-	raw_upscaled_h = _round_pos_int(real_upscale * _in.orig_h)
-	extra_w = max(raw_upscaled_w - _in.up_w, 0)
-	extra_h = max(raw_upscaled_h - _in.up_h, 0)
+	raw_upscaled_w = _round_pos_int(real_upscale * _in.init_w)
+	raw_upscaled_h = _round_pos_int(real_upscale * _in.init_h)
+	extra_w = max(raw_upscaled_w - _in.hd_w, 0)
+	extra_h = max(raw_upscaled_h - _in.hd_h, 0)
 	crop_x_offset, crop_y_offset = _upscaled_crop_xy_offset(extra_w, extra_h, _in.align_x, _in.align_y)
 	return ResultUpscaledCropPad(
 		real_upscale,
-		True, _in.up_w, _in.up_h, crop_x_offset, crop_y_offset,
+		True, _in.hd_w, _in.hd_h, crop_x_offset, crop_y_offset,
 		False, 0, 0, 0, 0,
 	)
 
@@ -57,10 +57,10 @@ def _upscaled_pad_side_values(extra_w: int, extra_h: int, align_x: float, align_
 
 
 def _upscaled_pad(_in: _CropPadInput, real_upscale: float) -> ResultUpscaledCropPad:
-	raw_upscaled_w = _round_pos_int(real_upscale * _in.orig_w)
-	raw_upscaled_h = _round_pos_int(real_upscale * _in.orig_h)
-	pad_w = max(_in.up_w - raw_upscaled_w, 0)
-	pad_h = max(_in.up_h - raw_upscaled_h, 0)
+	raw_upscaled_w = _round_pos_int(real_upscale * _in.init_w)
+	raw_upscaled_h = _round_pos_int(real_upscale * _in.init_h)
+	pad_w = max(_in.hd_w - raw_upscaled_w, 0)
+	pad_h = max(_in.hd_h - raw_upscaled_h, 0)
 	return ResultUpscaledCropPad(
 		real_upscale,
 		False, raw_upscaled_w, raw_upscaled_h, 0, 0,
@@ -70,8 +70,8 @@ def _upscaled_pad(_in: _CropPadInput, real_upscale: float) -> ResultUpscaledCrop
 
 def _upscaled_crop_delta_pixels(_in: _CropPadInput, result: ResultUpscaledCropPad) -> int:
 	"""Calculate the area of total cropped patch for crop-only mode."""
-	raw_upscaled_w = _round_pos_int(result.upscale * _in.orig_w)
-	raw_upscaled_h = _round_pos_int(result.upscale * _in.orig_h)
+	raw_upscaled_w = _round_pos_int(result.upscale * _in.init_w)
+	raw_upscaled_h = _round_pos_int(result.upscale * _in.init_h)
 	cropped_w = min(result.crop_width, raw_upscaled_w)
 	cropped_h = min(result.crop_height, raw_upscaled_h)
 	return abs(raw_upscaled_w * raw_upscaled_h - cropped_w * cropped_h)
@@ -79,8 +79,8 @@ def _upscaled_crop_delta_pixels(_in: _CropPadInput, result: ResultUpscaledCropPa
 
 def _upscaled_pad_delta_pixels(_in: _CropPadInput, result: ResultUpscaledCropPad) -> int:
 	"""Calculate the area of total out-painted patch for pad-only mode."""
-	raw_upscaled_w = _round_pos_int(result.upscale * _in.orig_w)
-	raw_upscaled_h = _round_pos_int(result.upscale * _in.orig_h)
+	raw_upscaled_w = _round_pos_int(result.upscale * _in.init_w)
+	raw_upscaled_h = _round_pos_int(result.upscale * _in.init_h)
 	padded_w = raw_upscaled_w + max(result.pad_left, 0) + max(result.pad_right, 0)
 	padded_h = raw_upscaled_h + max(result.pad_top, 0) + max(result.pad_bottom, 0)
 	return abs(padded_w * padded_h - raw_upscaled_w * raw_upscaled_h)
@@ -88,11 +88,11 @@ def _upscaled_pad_delta_pixels(_in: _CropPadInput, result: ResultUpscaledCropPad
 
 def _upscaled_crop_pad(_in: _CropPadInput) -> ResultUpscaledCropPad:
 	"""The actual function for "Upscaled Crop/Pad" node - extracted to wrap it with displaying the message."""
-	needs_resize, real_upscale_avg, real_upscale_x, real_upscale_y = _need_post_resize(_in.orig_w, _in.orig_h, _in.up_w, _in.up_h)
+	needs_resize, real_upscale_avg, real_upscale_x, real_upscale_y = _need_post_resize(_in.init_w, _in.init_h, _in.hd_w, _in.hd_h)
 	if not needs_resize:
 		return ResultUpscaledCropPad(
 			real_upscale_avg,
-			False, _in.up_w, _in.up_h, 0, 0,
+			False, _in.hd_w, _in.hd_h, 0, 0,
 			False, 0, 0, 0, 0,
 		)
 
@@ -117,19 +117,19 @@ def _upscaled_crop_pad(_in: _CropPadInput) -> ResultUpscaledCropPad:
 	assert _in.strategy == UpscaledCropPadStrategy.EXACT_UPSCALE
 
 	upscale = _in.upscale
-	raw_upscaled_w = _round_pos_int(upscale * _in.orig_w)
-	raw_upscaled_h = _round_pos_int(upscale * _in.orig_h)
+	raw_upscaled_w = _round_pos_int(upscale * _in.init_w)
+	raw_upscaled_h = _round_pos_int(upscale * _in.init_h)
 	# We're in the most complex case. These ^ can be both below and above the target up-res.
 	# So, we need to follow the whole upscale->crop->pad chain: we'll just get zeroes where there will be nothing to do.
 
-	cropped_w = min(_in.up_w, raw_upscaled_w)
-	cropped_h = min(_in.up_h, raw_upscaled_h)
+	cropped_w = min(_in.hd_w, raw_upscaled_w)
+	cropped_h = min(_in.hd_h, raw_upscaled_h)
 	crop_extra_w = raw_upscaled_w - cropped_w
 	crop_extra_h = raw_upscaled_h - cropped_h
 	crop_x_offset, crop_y_offset = _upscaled_crop_xy_offset(crop_extra_w, crop_extra_h, _in.align_x, _in.align_y)
 
-	pad_extra_w = _in.up_w - cropped_w
-	pad_extra_h = _in.up_h - cropped_h
+	pad_extra_w = _in.hd_w - cropped_w
+	pad_extra_h = _in.hd_h - cropped_h
 	pad_side_values = _upscaled_pad_side_values(pad_extra_w, pad_extra_h, _in.align_x, _in.align_y)
 	return ResultUpscaledCropPad(
 		upscale,
@@ -140,7 +140,7 @@ def _upscaled_crop_pad(_in: _CropPadInput) -> ResultUpscaledCropPad:
 
 def upscaled_crop_pad(
 	upscale: float,
-	orig_w: int, orig_h: int, up_w: int, up_h: int,
+	init_w: int, init_h: int, hd_w: int, hd_h: int,
 	strategy: str,
 	align_x: float, align_y: float,
 	show: bool = True,
@@ -153,7 +153,7 @@ def upscaled_crop_pad(
 	# noinspection PyArgumentList
 	result = _upscaled_crop_pad(_CropPadInput(
 		upscale,
-		orig_w, orig_h, up_w, up_h,
+		init_w, init_h, hd_w, hd_h,
 		strategy,
 		align_x, align_y,
 	))
@@ -173,8 +173,8 @@ def upscaled_crop_pad(
 	text_parts: _t.List[str] = [f"x{result.upscale:.3f}", ]
 
 	if result.do_crop:
-		crop_r = up_w - (result.crop_x_origin + result.crop_width)
-		crop_b = up_h - (result.crop_y_origin + result.crop_height)
+		crop_r = hd_w - (result.crop_x_origin + result.crop_width)
+		crop_b = hd_h - (result.crop_y_origin + result.crop_height)
 		text_parts.append(f"Crop:\nL {result.crop_x_origin}, R {crop_r}, B {crop_b}, T {result.crop_y_origin}")
 
 	if result.do_padding:

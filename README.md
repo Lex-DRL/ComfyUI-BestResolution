@@ -7,7 +7,9 @@
 A small modular pack — nodes for semi-automatic calculation of the best (most optimal) sampling resolution:
 - ... model-agnostic — i.e., compatible with **ANY** model (from now **or** the future),
 - ... accounting for upscale,
-- ... and for (the essential) pixel-step. 
+- ... and for (the essential) pixel-step.
+
+[🔄 Updates ChangeLog](CHANGELOG.md)
 
 ![image](img/screenshot1.png)
 
@@ -42,6 +44,14 @@ To my taste, **THE** way to select the optimal resolution for diffusion models.
 All you need to know is a size (one side) of square images the model was trained on _(512 for SD1.5, 1024 for SDXL)_. The node handles the rest to meet all the restrictions:
 - match the total resolution (i.e., image area, number of pixels) as close to the training one as possible,
 - ... while still respecting aspect ratio, image orientation and step size.
+
+### Advanced: Upscale support (aka "HD-fix")
+
+![image](img/screenshot2.png)
+
+`Best-Res` nodes have a special version _(currently, only `area` node has one)_, which also account for very first upscale aka HD-fix - to ensure the upscaled resolution is also divisible by the step value.
+
+Additionally, they're accompanied by utility node to also auto-detect any necessary cropping/padding (for out-paint) to perform on the upscaled image before second KSampler (the "HD-fix" itself).
 
 ## Tooltips
 

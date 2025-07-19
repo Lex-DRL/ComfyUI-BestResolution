@@ -23,7 +23,7 @@ _res_priority_data_type_set = set(_res_priority_data_type)
 _res_priority_in_type = (
 	_res_priority_data_type,
 	{
-		'default': RoundingPriority.DESIRED.value,
+		'default': RoundingPriority.ORIGINAL,
 		'tooltip': _format_object_docstring(RoundingPriority),
 	}
 )
@@ -77,7 +77,7 @@ _up_strategy_data_type_set = set(_up_strategy_data_type)
 _up_strategy_in_type = (
 	_up_strategy_data_type,
 	{
-		'default': UpscaledCropPadStrategy.EXACT_UPSCALE.value,
+		'default': UpscaledCropPadStrategy.PAD,
 		'tooltip': _format_object_docstring(UpscaledCropPadStrategy),
 	}
 )
@@ -98,11 +98,11 @@ def _up_strategy_verify(strategy: _t.Union[RoundingPriority, str]) -> str:
 	return str(strategy)
 
 
-class BestResolutionPrimUpStrategy:
+class BestResolutionPrimCropPadStrategy:
 	"""
 	'strategy' selector for "Upscaled Crop/Pad" node in "Best Resolution" pack.
 	"""
-	NODE_NAME = 'BestResolutionPrimUpStrategy'
+	NODE_NAME = 'BestResolutionPrimCropPadStrategy'
 	CATEGORY = _meta.category
 	DESCRIPTION = _format_docstring(_cleandoc(__doc__))
 
