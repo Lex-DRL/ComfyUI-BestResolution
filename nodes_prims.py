@@ -77,7 +77,7 @@ _up_strategy_data_type_set = set(_up_strategy_data_type)
 _up_strategy_in_type = (
 	_up_strategy_data_type,
 	{
-		'default': UpscaledCropPadStrategy.PAD.value,
+		'default': UpscaledCropPadStrategy.EXACT_UPSCALE.value,
 		'tooltip': _format_object_docstring(UpscaledCropPadStrategy),
 	}
 )

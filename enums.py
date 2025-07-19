@@ -45,9 +45,11 @@ class UpscaledCropPadStrategy(__BaseEnum):
 	• pad - upscale the image to fit it into the desired frame on one side,
 	then add missing pixels on the other one for outpaint.
 	• crop - upscale the image to fill the entire frame, then crop extra pixels on one side.
-	• nearest - automatically choose one of the above, to crop/pad the least number of pixels.
+	• nearest - automatically choose one of the above, to crop/pad the least number of pixels (by area).
 	• exact-upscale - follow the provided upscale-value precisely. This is the only option
 	that uses it. Also, it's the only one that might require both outpainting and crop.
+
+	In case when both are required, the output values assume this order: upscale -> crop -> pad.
 	"""
 	PAD = 'pad'
 	CROP = 'crop'

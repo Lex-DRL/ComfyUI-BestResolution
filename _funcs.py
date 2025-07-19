@@ -261,21 +261,3 @@ def upscale_result_from_approx_wh(
 
 	_show_text_on_node(text, unique_id)
 	return result
-
-
-def upscaled_crop_pad(
-	upscale: float,
-	orig_w: int, orig_h: int, up_w: int, up_h: int,
-	strategy: _t.Union[UpscaledCropPadStrategy, str],
-	align_x: float, align_y: float,
-	# show: bool,
-	unique_id: str = None
-) -> ResultUpscaledCropPad:
-):
-	# TODO
-	result = ResultUpscaledCropPad(
-		upscale,
-		False, 1024, 1024, 0, 0,
-		False, 10, 10, 10, 10,
-	)
-	return result

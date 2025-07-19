@@ -11,7 +11,7 @@ from frozendict import deepfreeze as _deepfreeze, frozendict as _frozendict
 
 from comfy.comfy_types.node_typing import IO as _IO
 
-from ._funcs import upscaled_crop_pad as _upscaled_crop_pad
+from ._funcs_crop_pad import upscaled_crop_pad as _upscaled_crop_pad
 from . import _meta
 from .docstring_formatter import format_docstring as _format_docstring
 from .enums import *
