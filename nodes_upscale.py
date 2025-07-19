@@ -52,7 +52,7 @@ __extra_inputs_for_upscale_only = {
 	'priority': _res_priority_in_type,
 	'upscale': _upscale_in_type,
 	'HD_step': (_IO.INT, dict(_type_dict_step_upscale1, **{
-		'tooltip': "Same as the main `step`, but for the upscaled resolution.",
+		'tooltip': "Same as the main `step`, but for the upscaled resolution.\n144 = 8 * 2 * 3 * 3",
 	})),
 }
 

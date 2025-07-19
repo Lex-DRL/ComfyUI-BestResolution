@@ -23,7 +23,7 @@ _res_priority_data_type_set = set(_res_priority_data_type)
 _res_priority_in_type = (
 	_res_priority_data_type,
 	{
-		'default': RoundingPriority.DESIRED.value,
+		'default': RoundingPriority.ORIGINAL,
 		'tooltip': _format_object_docstring(RoundingPriority),
 	}
 )
