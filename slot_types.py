@@ -32,4 +32,5 @@ upscale_in_type = (_IO.FLOAT, {
 })
 rel_pos_in_type = (_IO.FLOAT, {
 	'default': 0.5, 'min': 0.0, 'max': 1.0, 'step': 0.125, 'round': 0.0001,
+	# 'display': 'slider', # Cosmetic only: display as 'number' or 'slider'
 })

@@ -50,10 +50,10 @@ _input_types_crop_pad = _deepfreeze({
 		'upscale': (_IO.FLOAT, dict(_upscale_in_type[1], **{
 			'tooltip': f"Only used when {UpscaledCropPadStrategy.EXACT_UPSCALE!r} strategy selected."
 		})),
-		'orig_w': (_IO.INT, dict(_type_dict_res, **{'tooltip': _return_ttips_upscale['orig_w']})),
-		'orig_h': (_IO.INT, dict(_type_dict_res, **{'tooltip': _return_ttips_upscale['orig_h']})),
-		'up_w': (_IO.INT, dict(_type_dict_res, **{'tooltip': _return_ttips_upscale['up_w']})),
-		'up_h': (_IO.INT, dict(_type_dict_res, **{'tooltip': _return_ttips_upscale['up_h']})),
+		'init_width': (_IO.INT, dict(_type_dict_res, **{'tooltip': _return_ttips_upscale['init_width']})),
+		'init_height': (_IO.INT, dict(_type_dict_res, **{'tooltip': _return_ttips_upscale['init_height']})),
+		'HD_width': (_IO.INT, dict(_type_dict_res, **{'tooltip': _return_ttips_upscale['HD_width'], 'default': 1536})),
+		'HD_height': (_IO.INT, dict(_type_dict_res, **{'tooltip': _return_ttips_upscale['HD_height'], 'default': 1536})),
 		'strategy': _up_strategy_in_type,
 		'align_x': (_IO.FLOAT, dict(_rel_pos_in_type[1], **{
 			'tooltip': (
@@ -103,7 +103,7 @@ class BestResolutionUpscaledCropPad:
 	def main(
 		self,
 		upscale: float,
-		orig_w: int, orig_h: int, up_w: int, up_h: int,
+		init_width: int, init_height: int, HD_width: int, HD_height: int,
 		strategy: _t.Union[UpscaledCropPadStrategy, str],
 		align_x: float, align_y: float,
 		# show: bool,
@@ -111,7 +111,7 @@ class BestResolutionUpscaledCropPad:
 	):
 		return _upscaled_crop_pad(
 			upscale,
-			orig_w, orig_h, up_w, up_h,
+			init_width, init_height, HD_width, HD_height,
 			_up_strategy_verify(strategy),
 			align_x, align_y,
 			# show,

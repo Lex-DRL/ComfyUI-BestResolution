@@ -179,56 +179,56 @@ def simple_result_from_approx_wh(
 	return result
 
 
-def _need_post_resize(width: int, height: int, up_width: int, up_height: int):
+def _need_post_resize(width: int, height: int, hd_width: int, hd_height: int):
 	"""
 	Detect whether the final init-res CAN NOT be uniformly scaled to the higher res,
 	and thus would require cropping/out-painting.
 	"""
-	real_upscale_x: float = float(up_width) / width
-	real_upscale_y: float = float(up_height) / height
+	real_upscale_x: float = float(hd_width) / width
+	real_upscale_y: float = float(hd_height) / height
 	real_upscale_avg: float = (real_upscale_x + real_upscale_y) * 0.5
 
 	needs_resize: bool = (
-		round_pos_int(real_upscale_avg * width) != up_width or
-		round_pos_int(real_upscale_avg * height) != up_height
+		round_pos_int(real_upscale_avg * width) != hd_width or
+		round_pos_int(real_upscale_avg * height) != hd_height
 	)
 	return needs_resize, real_upscale_avg, real_upscale_x, real_upscale_y
 
 
 def upscale_result_from_approx_wh(
 	width_f: float, height_f: _t_number, step: int,
-	priority: _t.Union[RoundingPriority, str], upscale: float, up_step:int,
+	priority: _t.Union[RoundingPriority, str], upscale: float, hd_step:int,
 	show: bool = True,
 	unique_id: str = None, target_square_size: _t_number = None
 ) -> ResultUpscaled:
 	"""Primary part of the main func for nodes with upscaling - when desired initial-width/height are already calculated."""
 	upscale = max(float(upscale), 1.0)
-	up_width_f: float = upscale * width_f
-	up_height_f: float = upscale * height_f
+	hd_width_f: float = upscale * width_f
+	hd_height_f: float = upscale * height_f
 	width_f = float(width_f)
 
 	step = number_to_int(step)
-	up_step = number_to_int(up_step)
+	hd_step = number_to_int(hd_step)
 
 	if priority == RoundingPriority.DESIRED:
 		width, n_steps_x, height, n_steps_y = round_width_and_height_closest_to_the_ratio(width_f, height_f, step)
-		up_width, up_steps_x, up_height, up_steps_y = round_width_and_height_closest_to_the_ratio(
-			up_width_f, up_height_f, up_step
+		hd_width, hd_steps_x, hd_height, hd_steps_y = round_width_and_height_closest_to_the_ratio(
+			hd_width_f, hd_height_f, hd_step
 		)
 	elif priority == RoundingPriority.ORIGINAL:
 		width, n_steps_x, height, n_steps_y = round_width_and_height_closest_to_the_ratio(width_f, height_f, step)
-		up_width, up_steps_x, up_height, up_steps_y = round_width_and_height_closest_to_the_ratio(
-			upscale * width, upscale * height, up_step
+		hd_width, hd_steps_x, hd_height, hd_steps_y = round_width_and_height_closest_to_the_ratio(
+			upscale * width, upscale * height, hd_step
 		)
 	else:
-		up_width, up_steps_x, up_height, up_steps_y = round_width_and_height_closest_to_the_ratio(
-			up_width_f, up_height_f, up_step
+		hd_width, hd_steps_x, hd_height, hd_steps_y = round_width_and_height_closest_to_the_ratio(
+			hd_width_f, hd_height_f, hd_step
 		)
 		width, n_steps_x, height, n_steps_y = round_width_and_height_closest_to_the_ratio(
-			float(up_width) / upscale, float(up_height) / upscale, step
+			float(hd_width) / upscale, float(hd_height) / upscale, step
 		)
 
-	result = ResultUpscaled(upscale, width, height, up_width, up_height)
+	result = ResultUpscaled(upscale, width, height, hd_width, hd_height)
 
 	if not unique_id:
 		return result
@@ -240,14 +240,14 @@ def upscale_result_from_approx_wh(
 	report_parts: _t.List[str] = list()
 	for prefix, w_f, h_f, s, w, n_x, h, n_y, trg_sq in [
 		('◻️ ', width_f, height_f, step, width, n_steps_x, height, n_steps_y, target_square_size),
-		('🔲 ', up_width_f, up_height_f, up_step, up_width, up_steps_x, up_height, up_steps_y, _sqrt(up_width_f * up_height_f))
+		('🔲 ', hd_width_f, hd_height_f, hd_step, hd_width, hd_steps_x, hd_height, hd_steps_y, _sqrt(hd_width_f * hd_height_f))
 	]:
 		cur_report = format_report_simple(w_f, h_f, s, w, n_x, h, n_y, trg_sq)
 		report_parts.append('\n'.join(
 			f"{prefix}{x}" for x in cur_report.split('\n')
 		))
 
-	needs_resize, real_upscale_avg, real_upscale_x, real_upscale_y = _need_post_resize(width, height, up_width, up_height)
+	needs_resize, real_upscale_avg, real_upscale_x, real_upscale_y = _need_post_resize(width, height, hd_width, hd_height)
 
 	separator_line: str = (
 		# Real upscale factor in X and Y differ enough so we can't get the up-res from init-res with ANY uniform value:

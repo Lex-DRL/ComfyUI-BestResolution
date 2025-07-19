@@ -2,6 +2,7 @@
 
 - This `CHANGELOG.md` file.
 - Prim-node rename (class and internal name, too): `Upscale Strategy (Best-Res)` -> `Crop-Pad Strategy (Best-Res)`
+- Inputs/outputs for upscale-related nodes are renamed to be more intuitive.
 
 # V1.1.0
 
