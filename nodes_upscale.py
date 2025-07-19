@@ -18,39 +18,31 @@ from ._funcs import (
 	float_width_height_from_area as _float_width_height_from_area,
 	upscale_result_from_approx_wh as _upscale_result_from_approx_wh
 )
+from . import _meta
+from .docstring_formatter import format_docstring as _format_docstring
 from .enums import *
-from .node_types import *
 from .nodes_simple import _input_types_area
 from .nodes_prims import _res_priority_in_type, _res_priority_verify
+from .slot_types import (
+	type_dict_step_upscale1 as _type_dict_step_upscale1,
+	upscale_in_type as _upscale_in_type
+)
 
 # ----------------------------------------------------------
 
-_return_types_upscale = (_IO.INT, _IO.INT, _IO.FLOAT, _IO.INT, _IO.INT, _IO.BOOLEAN)
+_return_types_upscale = (_IO.FLOAT, _IO.INT, _IO.INT, _IO.INT, _IO.INT)
 _return_ttips_upscale = _frozendict({
+	'upscale': "Simply outputs the same upscale-value you've set on the node.",
 	'orig_w': "Width for original/initial image",
 	'orig_h': "Height for original/initial image",
-	'upscale': (
-		"If 'needs_resize' is FALSE, this would be the actual uniform value to scale your initial-res in order "
-		"to get the upscaled-res.\n"
-		"If 'needs_resize' is TRUE, this slot simply outputs the same upscale-value you've set on the node."
-	),
 	'up_w': "Width for the (main) upscaled image",
 	'up_h': "Height for the (main) upscaled image",
-	'needs_resize': (
-		"This will be FALSE if you can get the exact upscaled resolution by simply scaling the initial-res uniformly "
-		"(by the value output into 'upscale' slot).\n\n"
-		"Otherwise, it will be TRUE — indicating that you'll need to do some cropping/out-painting right AFTER "
-		"the actual upscale (increasing the resolution itself) but BEFORE post-upscale sampling (\"HD-fix\")."
-	),
 })
 
 __extra_inputs_for_upscale_only = {
 	'priority': _res_priority_in_type,
-	'upscale': (_IO.FLOAT, {
-		'default': 1.5, 'min': 1.0, 'max': _sys.float_info.max, 'step': 0.25, 'round': 0.001,
-		# 'tooltip': "",  # TODO
-	}),
-	'up_step': (_IO.INT, dict(type_dict_step_upscale1, **{
+	'upscale': _upscale_in_type,
+	'up_step': (_IO.INT, dict(_type_dict_step_upscale1, **{
 		'tooltip': "Same as the main `step`, but for the upscaled resolution.",
 	})),
 }
@@ -75,18 +67,19 @@ class BestResolutionFromAreaUpscale:
 
 	... PLUS, account for the immediate upscale right away.
 
+
 	Desired resolution (aka image area/megapixels/pixel count) is specified with a side of a square image. This isn't
 	accidental: most models disclose what image resolution they're trained on, and usually they're square:
-
 	- SD 1.5 - 512x512 pixels
 	- SDXL - 1024x1024 pixels
+
 
 	By simply providing this single number and setting your aspect ratio/orientation, you get the width and height to
 	produce the closest total resolution to the training set, while also respecting image proportions and step-rounding.
 	"""
 	NODE_NAME = 'BestResolutionFromAreaUpscale'
-	CATEGORY = "utils/resolution"
-	DESCRIPTION = _cleandoc(__doc__)
+	CATEGORY = _meta.category
+	DESCRIPTION = _format_docstring(_cleandoc(__doc__))
 
 	OUTPUT_NODE = True
 

@@ -19,7 +19,12 @@ from ._funcs import (
 	float_width_height_from_area as _float_width_height_from_area,
 	simple_result_from_approx_wh as _simple_result_from_approx_wh
 )
-from .node_types import *
+from . import _meta
+from .docstring_formatter import format_docstring as _format_docstring
+from .slot_types import (
+	type_dict_res as _type_dict_res,
+	type_dict_step_init as _type_dict_step_init
+)
 
 # ----------------------------------------------------------
 
@@ -31,9 +36,9 @@ _return_names_simple = ('width', 'height')
 # A tiny optimization by reusing the same immutable dict:
 _input_types_simple = _deepfreeze({
 	'required': {
-		'width': (_IO.INT, dict(type_dict_res, **{'tooltip': "Approximate width"})),
-		'height': (_IO.INT, dict(type_dict_res, **{'tooltip': "Approximate height"})),
-		'step': (_IO.INT, dict(type_dict_step_init, **{'tooltip': (
+		'width': (_IO.INT, dict(_type_dict_res, **{'tooltip': "Approximate width"})),
+		'height': (_IO.INT, dict(_type_dict_res, **{'tooltip': "Approximate height"})),
+		'step': (_IO.INT, dict(_type_dict_step_init, **{'tooltip': (
 			"Both width and height will be divisible by this value - by rounding them "
 			"to the closest appropriate resolution.\n\n"
 			"The default 48 is (8 * 3 * 2), so it's a safe choice because:\n"
@@ -62,8 +67,8 @@ class BestResolutionSimple:
 	only rounding performed, desired image size specified directly.
 	"""
 	NODE_NAME = 'BestResolutionSimple'
-	CATEGORY = "utils/resolution"
-	DESCRIPTION = _cleandoc(__doc__)
+	CATEGORY = _meta.category
+	DESCRIPTION = _format_docstring(_cleandoc(__doc__))
 
 	OUTPUT_NODE = True
 
@@ -97,7 +102,7 @@ _tooltip_aspect = (
 
 _input_types_orient = _deepfreeze({
 	'required': {
-		'size': (_IO.INT, dict(type_dict_res, **{'tooltip': (
+		'size': (_IO.INT, dict(_type_dict_res, **{'tooltip': (
 			"Approximate size of one of the image sides.\nWhich one - see the 'size_is_big' and 'landscape' toggles."
 		)})),
 		'step': _input_types_simple['required']['step'],
@@ -136,8 +141,8 @@ class BestResolutionFromAspectRatio:
 	image size selected indirectly - by one of the sides + aspect ratio.
 	"""
 	NODE_NAME = 'BestResolutionFromAspectRatio'
-	CATEGORY = "utils/resolution"
-	DESCRIPTION = _cleandoc(__doc__)
+	CATEGORY = _meta.category
+	DESCRIPTION = _format_docstring(_cleandoc(__doc__))
 
 	OUTPUT_NODE = True
 
@@ -177,7 +182,7 @@ class BestResolutionFromAspectRatio:
 
 _input_types_area = _deepfreeze({
 	'required': {
-		'square_size': (_IO.INT, dict(type_dict_res, **{'tooltip': (
+		'square_size': (_IO.INT, dict(_type_dict_res, **{'tooltip': (
 			"The total resolution of the image would be the same as of a square with this side.\n"
 			"The width and height would be such to respect aspect ratio, but also be as close as possible to the "
 			"total number of pixels as in this square image.\n\n"
@@ -202,18 +207,19 @@ class BestResolutionFromArea:
 	The most efficient way of selecting an optimal resolution:
 	image size selected indirectly - by the total desired resolution (area) + aspect ratio.
 
+
 	Desired resolution (aka image area/megapixels/pixel count) is specified with a side of a square image. This isn't
 	accidental: most models disclose what image resolution they're trained on, and usually they're square:
-
 	- SD 1.5 - 512x512 pixels
 	- SDXL - 1024x1024 pixels
+
 
 	By simply providing this single number and setting your aspect ratio/orientation, you get the width and height to
 	produce the closest total resolution to the training set, while also respecting image proportions and step-rounding.
 	"""
 	NODE_NAME = 'BestResolutionFromArea'
-	CATEGORY = "utils/resolution"
-	DESCRIPTION = _cleandoc(__doc__)
+	CATEGORY = _meta.category
+	DESCRIPTION = _format_docstring(_cleandoc(__doc__))
 
 	OUTPUT_NODE = True
 
