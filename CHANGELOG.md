@@ -27,6 +27,6 @@ The minimally-complete version (full workflow coverage for my own use-case).
 The MVP. Contains nodes:
 - `Best-Res (simple)`
 - `Best-Res (ratio)`
-- `Best-Res (area+scale)`
+- `Best-Res (area)`
 
 `TODO: supporting utility nodes (primitives for combo-selectors, calculators for post-upscale res-tweaks with pad/crop).`
