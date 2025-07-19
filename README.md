@@ -45,6 +45,14 @@ All you need to know is a size (one side) of square images the model was trained
 - match the total resolution (i.e., image area, number of pixels) as close to the training one as possible,
 - ... while still respecting aspect ratio, image orientation and step size.
 
+### Advanced: Upscale support (aka "HD-fix")
+
+![image](img/screenshot2.png)
+
+`Best-Res` nodes have a special version _(currently, only `area` node has one)_, which also account for very first upscale aka HD-fix - to ensure the upscaled resolution is also divisible by the step value.
+
+Additionally, they're accompanied by utility node to also auto-detect any necessary cropping/padding (for out-paint) to perform on the upscaled image before second KSampler (the "HD-fix" itself).
+
 ## Tooltips
 
 Each parameter is self-documented in the shortest possible, yet exhaustive detail - just hover mouse over it. If you're new to Comfy and Stable Diffusion, this might be especially helpful.
