@@ -11,6 +11,7 @@ from math import sqrt as _sqrt
 from server import PromptServer as _PromptServer
 
 from .enums import *
+from .return_tuples import *
 
 
 _t_number = _t.Union[int, float]
@@ -159,12 +160,12 @@ def simple_result_from_approx_wh(
 	width_f: float, height_f: _t_number, step: int,
 	show: bool = True,
 	unique_id: str = None, target_square_size: _t_number = None
-):
+) -> ResultSimple:
 	"""Final part of the main func for simple (non-upscale) nodes - when desired width/height are already calculated."""
 	step = number_to_int(step)
 	width, n_steps_x, height, n_steps_y = round_width_and_height_closest_to_the_ratio(width_f, height_f, step)
 
-	result = (width, height)
+	result = ResultSimple(width, height)
 
 	if not unique_id:
 		return result
@@ -199,7 +200,7 @@ def upscale_result_from_approx_wh(
 	priority: _t.Union[RoundingPriority, str], upscale: float, up_step:int,
 	show: bool = True,
 	unique_id: str = None, target_square_size: _t_number = None
-):
+) -> ResultUpscaled:
 	"""Primary part of the main func for nodes with upscaling - when desired initial-width/height are already calculated."""
 	upscale = max(float(upscale), 1.0)
 	up_width_f: float = upscale * width_f
@@ -230,7 +231,7 @@ def upscale_result_from_approx_wh(
 	needs_resize, real_upscale_avg, real_upscale_x, real_upscale_y = _need_post_resize(width, height, up_width, up_height)
 	out_upscale: float = upscale if needs_resize else real_upscale_avg
 
-	result = (out_upscale, width, height, up_width, up_height, needs_resize)
+	result = ResultUpscaled(out_upscale, width, height, up_width, up_height, needs_resize)
 
 	if not unique_id:
 		return result
