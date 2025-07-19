@@ -2,9 +2,9 @@
 
 > "Simple is better than complex." _— Zen of Python_
 
-# `Best Resolution` nodes for ComfyUI
+# `Best Resolution` ComfyUI nodes [UX/QoL]
 
-A small modular pack — QoL nodes for semi-automatic calculation of the best (most optimal) sampling resolution:
+A small modular pack — nodes for semi-automatic calculation of the best (most optimal) sampling resolution:
 - ... model-agnostic — i.e., compatible with **ANY** model (from now **or** the future),
 - ... accounting for upscale,
 - ... and for (the essential) pixel-step. 
