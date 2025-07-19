@@ -26,7 +26,9 @@ In case you didn't know, you can't just choose **any** arbitrary resolution for 
 
 ... and choosing the right resolution is your responsibility. 🤷🏻‍♂️
 
-This pack lets you forget about crunching numbers and handles the calculation of optimal width/height for you, while still leaving control of the image size/proportions/orientation to you. It provides 3 main nodes:
+This pack lets you forget about crunching numbers and handles the calculation of optimal width/height for you, while still leaving control of the image size/proportions/orientation to you. It provides...
+
+## 3 main nodes
 
 ### Simple
 
@@ -45,7 +47,7 @@ All you need to know is a size (one side) of square images the model was trained
 - match the total resolution (i.e., image area, number of pixels) as close to the training one as possible,
 - ... while still respecting aspect ratio, image orientation and step size.
 
-### Advanced: Upscale support (aka "HD-fix")
+## Advanced: Upscale support (aka "HD-fix")
 
 ![image](img/screenshot2.png)
 
