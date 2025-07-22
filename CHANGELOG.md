@@ -1,4 +1,10 @@
-# V1.1.1
+## `TODO`
+
+- Add `upscale` versions for `simple` and `ratio` nodes, too.
+- Add options for `crop/pad` node - to determine the order of [crop/pad] -> upscale -> [crop/pad].
+- Add node for auto-detecting USDU-padding from initial res.
+
+# v1.1.1
 
 - This `CHANGELOG.md` file.
 - Prim-node rename (class and internal name, too): `Upscale Strategy (Best-Res)` -> `Crop-Pad Strategy (Best-Res)`
@@ -6,12 +12,7 @@
 - `Best-Res (area+scale)`: change (restore) the value returned by `upscale` output.
 - Upscale-related nodes: change some defaults.
 
-⚠️ Active `TODO:`
-- Add `upscale` versions for `simple` and `ratio` nodes, too.
-- Add options for `crop/pad` node - to determine the order of [crop/pad] -> upscale -> [crop/pad].
-- Add node for auto-detecting USDU-padding from initial res.
-
-# V1.1.0
+# v1.1.0
 
 The minimally-complete version (full workflow coverage for my own use-case).
 - Significant internal refactor.
@@ -29,5 +30,3 @@ The MVP. Contains nodes:
 - `Best-Res (simple)`
 - `Best-Res (ratio)`
 - `Best-Res (area)`
-
-`TODO: supporting utility nodes (primitives for combo-selectors, calculators for post-upscale res-tweaks with pad/crop).`
