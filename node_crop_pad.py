@@ -25,11 +25,6 @@ from .slot_types import (
 
 # ----------------------------------------------------------
 
-_return_types_crop_pad = (
-	_IO.FLOAT,
-	_IO.BOOLEAN, _IO.INT, _IO.INT, _IO.INT, _IO.INT,
-	_IO.BOOLEAN, _IO.INT, _IO.INT, _IO.INT, _IO.INT,
-)
 _return_ttips_crop_pad = _frozendict({
 	'upscale': "The actual uniform upscale value to do.",
 
@@ -92,7 +87,11 @@ class BestResolutionUpscaledCropPad:
 	OUTPUT_NODE = True
 
 	FUNCTION = 'main'
-	RETURN_TYPES = _return_types_crop_pad
+	RETURN_TYPES = (
+		_IO.FLOAT,
+		_IO.BOOLEAN, _IO.INT, _IO.INT, _IO.INT, _IO.INT,
+		_IO.BOOLEAN, _IO.INT, _IO.INT, _IO.INT, _IO.INT,
+	)
 	RETURN_NAMES = tuple(_return_ttips_crop_pad.keys())
 	OUTPUT_TOOLTIPS = tuple(_return_ttips_crop_pad.values())
 

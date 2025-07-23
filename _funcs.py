@@ -137,7 +137,7 @@ def _format_report_square_part(
 def format_report_simple(
 	width_f: float, height_f: _t_number, step: int,
 	width: int, n_steps_x: int, height: int, n_steps_y: int,
-	target_square_size: _t_number = None
+	target_square_size: _t_number = None, prefix: str = '', suffix: str = '',
 ) -> str:
 	square_side_text = _format_report_square_part(width_f, height_f, width, height, target_square_size)
 
@@ -150,16 +150,18 @@ def format_report_simple(
 	)
 
 	return (
+		f"{prefix}"
 		f"{width}/{height}{square_side_text}\n"
 		f"{n_steps_x} * {step} / {n_steps_y} * {step}\n"
 		f"{ar_text}"
+		f"{suffix}"
 	)
 
 
 def simple_result_from_approx_wh(
 	width_f: float, height_f: _t_number, step: int,
 	show: bool = True,
-	unique_id: str = None, target_square_size: _t_number = None
+	unique_id: str = None, target_square_size: _t_number = None, status_prefix: str = '', status_suffix: str = ''
 ) -> ResultSimple:
 	"""Final part of the main func for simple (non-upscale) nodes - when desired width/height are already calculated."""
 	step = number_to_int(step)
@@ -170,11 +172,13 @@ def simple_result_from_approx_wh(
 	if not unique_id:
 		return result
 
-	text = (
-		format_report_simple(width_f, height_f, step, width, n_steps_x, height, n_steps_y, target_square_size)
-		if show
-		else None
-	)
+	text = None
+	if show:
+		text = format_report_simple(
+			width_f, height_f, step,
+			width, n_steps_x, height, n_steps_y,
+			target_square_size, status_prefix, status_suffix
+		)
 	_show_text_on_node(text, unique_id)
 	return result
 

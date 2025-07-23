@@ -23,6 +23,7 @@ def number_type_dict(default: int = 512, min: int = 1, max: int = _sys.maxsize, 
 
 
 type_dict_res = number_type_dict(1024)
+type_dict_step_default = number_type_dict(8)
 type_dict_step_init = number_type_dict(8*2*3)
 type_dict_step_upscale1 = number_type_dict(8*2*3*3)
 

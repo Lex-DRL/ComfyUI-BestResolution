@@ -4,6 +4,10 @@
 - Add options for `crop/pad` node - to determine the order of [crop/pad] -> upscale -> [crop/pad].
 - Add node for auto-detecting USDU-padding from initial res.
 
+# v1.1.2
+
+- New node: `Scale (Best-Res)`
+
 # v1.1.1
 
 - This `CHANGELOG.md` file.

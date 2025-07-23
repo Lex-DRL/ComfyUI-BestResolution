@@ -5,6 +5,7 @@
 import typing as _t
 
 from .node_crop_pad import BestResolutionUpscaledCropPad
+from .node_scale import BestResolutionScale
 from .nodes_prims import *
 from .nodes_simple import *
 from .nodes_upscale import *
@@ -14,6 +15,8 @@ NODE_CLASS_MAPPINGS: _t.Dict[str, type] = {
 	"BestResolutionFromAreaUpscale": BestResolutionFromAreaUpscale,
 	"BestResolutionFromAspectRatio": BestResolutionFromAspectRatio,
 	"BestResolutionSimple": BestResolutionSimple,
+
+	"BestResolutionScale": BestResolutionScale,
 
 	"BestResolutionPrimCropPadStrategy": BestResolutionPrimCropPadStrategy,
 	"BestResolutionPrimResPriority": BestResolutionPrimResPriority,
@@ -25,6 +28,8 @@ NODE_DISPLAY_NAME_MAPPINGS: _t.Dict[str, str] = {
 	"BestResolutionFromAreaUpscale": "Best-Res (area+scale)",
 	"BestResolutionFromAspectRatio": "Best-Res (ratio)",
 	"BestResolutionSimple": "Best-Res (simple)",
+
+	"BestResolutionScale": "Scale (Best-Res)",
 
 	"BestResolutionPrimCropPadStrategy": "Crop-Pad Strategy (Best-Res)",
 	"BestResolutionPrimResPriority": "Priority (Best-Res)",
