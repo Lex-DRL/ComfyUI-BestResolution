@@ -4,6 +4,10 @@
 - Add options for `crop/pad` node - to determine the order of [crop/pad] -> upscale -> [crop/pad].
 - Add node for auto-detecting USDU-padding from initial res.
 
+# v1.1.4
+
+- ... and an immediate bugfix.
+
 # v1.1.3
 
 - New node: `Upscale Image By (with Model)`

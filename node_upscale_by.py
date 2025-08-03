@@ -115,7 +115,7 @@ class ImageUpscaleByWithModel:
 		else:
 			out_image = _ImageUpscaleWithModel_instance.upscale(upscale_model, image)[0]
 			if do_downscale:
-				out_image = _ImageScaleBy_instance.upscale(out_image, scale_method, second_downscale)
+				out_image = _ImageScaleBy_instance.upscale(out_image, scale_method, second_downscale)[0]
 
 		if show_status and unique_id:
 			msg = _status_message(no_model_scale, do_downscale, model_scale, scale, second_downscale)
