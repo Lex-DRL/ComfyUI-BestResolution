@@ -111,7 +111,7 @@ class ImageUpscaleByWithModel:
 			or abs(model_scale - 1.0) <= _epsilon
 		)
 		if no_model_scale:
-			out_image = _ImageScaleBy_instance.upscale(image, scale_method, scale)
+			out_image = _ImageScaleBy_instance.upscale(image, scale_method, scale)[0]
 		else:
 			out_image = _ImageUpscaleWithModel_instance.upscale(upscale_model, image)[0]
 			if do_downscale:
