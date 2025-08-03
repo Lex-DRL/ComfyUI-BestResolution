@@ -11,10 +11,8 @@ A small modular pack — nodes for semi-automatic calculation of the best (most 
 
 [🔄 Updates ChangeLog](CHANGELOG.md)
 
-![image](img/screenshot1.png)
-
 > [!NOTE]
-> Nodes from this pack do **nothing** with actual images on their own — they only calculate the optimal **values** for the resolution.
+> Almost all the nodes from this pack do **nothing** with actual images on their own — they only calculate the optimal **values** for the resolution.
 
 Read any further only if you feel you need to.
 
@@ -29,6 +27,8 @@ In case you didn't know, you can't just choose **any** arbitrary resolution for 
 This pack lets you forget about crunching numbers and handles the calculation of optimal width/height for you, while still leaving control of the image size/proportions/orientation to you. It provides...
 
 ## 3 main nodes
+
+![screenshot1](img/screenshot1.png)
 
 ### Simple
 
@@ -47,9 +47,34 @@ All you need to know is a size (one side) of square images the model was trained
 - match the total resolution (i.e., image area, number of pixels) as close to the training one as possible,
 - ... while still respecting aspect ratio, image orientation and step size.
 
+## Helper node - `Upscale Image By (with Model)`
+
+![screenshot_upscale_model_by](img/screenshot_upscale_model_by.png)
+
+This is the **only** node in the pack which does more than some resolution calculation, and actually scales an image. But it's nothing more than a wrapper over the built-in `Upscale Image (using Model)` and `Upscale Image By` nodes used in sequence.
+
+Like the built-in `Upscale Image (using Model)` node, this one scales with a specialized model, **but also** does it to a desired upscale factor, like `Upscale Image By` does. This factor should be below the model's native one. And, depending on the value you set this factor to, you get different results.
+
+For a `x4` model, you could expect the following:
+
+| Target `scale` factor | Resulting image                                                                                                                    |
+|-----------------------|------------------------------------------------------------------------------------------------------------------------------------|
+| Below `x0.5`          | ❔ Perfect, crisp, but... 🤔 the model-upscale won't even be performed. Why using this node at all and not just `Upscale Image By`? |
+| `x0.5+` - `x1.0`      | 👍🏻 Perfect, downscale-only, but the result might be slightly different (and crisper) from using just `Upscale Image By`.         |
+| `x1.0+` - `x3.5`      | 👍🏻 **Perfect. The upscale range this node was made for.**                                                                        |
+| `x3.5+` - `x4.0`      | ⚠️ **Image starts getting blurry, but still better than just using `Upscale Image By`.**                                           |
+| `x4.0` exactly        | 👍🏻 Perfect. Just the same result as from `Upscale Image (using Model)`. Second scaling isn't even performed.                     |
+| `x4.0+`               | ‼️ **VERY** blurry                                                                                                                 |
+
+For a `x2` model, the middle two ranges (the most important ones, with **bold text**) would be, respectively:
+- `x1.0+` - `x1.5`
+- `x1.5+` - `x2.0`
+
+So, to get the best result, your upscale factor should be between `1.0` and `(model_scale - 0.5)`. The node won't stop you from getting a subpar result, but it will warn you (if the `show_status` toggle is enabled).
+
 ## Advanced: Upscale support (aka "HD-fix")
 
-![image](img/screenshot2.png)
+![screenshot2](img/screenshot2.png)
 
 `Best-Res` nodes have a special version _(currently, only `area` node has one)_, which also account for very first upscale aka HD-fix - to ensure the upscaled resolution is also divisible by the step value.
 
