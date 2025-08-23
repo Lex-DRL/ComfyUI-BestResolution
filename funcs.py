@@ -8,13 +8,28 @@ import typing as _t
 
 from math import sqrt as _sqrt
 
-from server import PromptServer as _PromptServer
-
 from .enums import *
 from .return_tuples import *
 
 
 _t_number = _t.Union[int, float]
+
+
+try:
+	from server import PromptServer as _PromptServer
+
+	def _show_text_on_node(text: str = None, node_id: str = None):
+		if not text:
+			# TODO: Planned for the future - currently, there's no point removing the text since it's box is shown anyway
+			# An odd workaround since `send_progress_text()` doesn't want to update text when '' passed
+			text = '<span></span>'
+		# print(f"{unique_id} text: {text!r}")
+
+		# Snatched from: https://github.com/comfyanonymous/ComfyUI/blob/27870ec3c30e56be9707d89a120eb7f0e2836be1/comfy_extras/nodes_images.py#L581-L582
+		_PromptServer.instance.send_progress_text(text, node_id)
+except ImportError:
+	def _show_text_on_node(text: str = None, node_id: str = None):
+		pass
 
 
 def aspect_ratios_sorted(aspect_a: float, aspect_b: float, min_clamp: float = 1.0):
@@ -91,17 +106,6 @@ def float_width_height_from_area(square_size: _t_number, landscape: bool, aspect
 	width_f: float = aspect_x * square_size
 	height_f: float = aspect_y * square_size
 	return width_f, height_f
-
-
-def _show_text_on_node(text: str = None, unique_id: str = None):
-	if not text:
-		# TODO: Planned for the future - currently, there's no point removing the text since it's box is shown anyway
-		# An odd workaround since `send_progress_text()` doesn't want to update text when '' passed
-		text = '<span></span>'
-	# print(f"{unique_id} text: {text!r}")
-
-	# Snatched from: https://github.com/comfyanonymous/ComfyUI/blob/27870ec3c30e56be9707d89a120eb7f0e2836be1/comfy_extras/nodes_images.py#L581-L582
-	_PromptServer.instance.send_progress_text(text, unique_id)
 
 
 def _format_report_square_part(

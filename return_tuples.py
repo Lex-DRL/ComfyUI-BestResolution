@@ -1,6 +1,6 @@
 # encoding: utf-8
 """
-For readability, all nodes in this node pack return NamedTuples instead of regular tuples.
+For readability, the results of all node-functions in this node pack are NamedTuples instead of regular tuples.
 """
 
 import typing as _t
