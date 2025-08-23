@@ -11,7 +11,7 @@ from frozendict import deepfreeze as _deepfreeze, frozendict as _frozendict
 
 from comfy.comfy_types.node_typing import IO as _IO
 
-from ._funcs import (
+from .funcs import (
 	number_to_int as _number_to_int,
 	float_width_height_from_area as _float_width_height_from_area,
 	upscale_result_from_approx_wh as _upscale_result_from_approx_wh

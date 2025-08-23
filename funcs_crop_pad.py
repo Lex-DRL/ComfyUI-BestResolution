@@ -6,7 +6,7 @@ The actual behavior of "Upscaled Crop/Pad" node.
 import typing as _t
 
 from ._dataclass import dataclass_with_slots_if_possible as _dataclass_with_slots_if_possible
-from ._funcs import round_pos_int as _round_pos_int, _need_post_resize, _show_text_on_node
+from .funcs import round_pos_int as _round_pos_int, _need_post_resize, _show_text_on_node
 from .enums import *
 from .return_tuples import *
 
