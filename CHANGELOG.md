@@ -4,6 +4,11 @@
 - Add options for `crop/pad` node - to determine the order of [crop/pad] -> upscale -> [crop/pad].
 - Add node for auto-detecting USDU-padding from initial res.
 
+# v1.3.0
+
+- Internal change: All the nodes migrated to Comfy's nodes v3 API schema.
+- No new features or changes in behavior.
+
 # v1.1.5
 
 - ... and another one.
