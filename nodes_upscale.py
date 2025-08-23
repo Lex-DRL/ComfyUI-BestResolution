@@ -17,6 +17,7 @@ from .funcs import (
 	upscale_result_from_approx_wh as _upscale_result_from_approx_wh
 )
 from . import _meta
+from . import _tooltips as _tt
 from .docstring_formatter import format_docstring as _format_docstring
 from .enums import *
 from .nodes_simple import _input_types_area
@@ -30,20 +31,11 @@ from .slot_types import (
 
 _return_types_upscale = (_IO.FLOAT, _IO.INT, _IO.INT, _IO.INT, _IO.INT)
 _return_ttips_upscale = _frozendict({
-	'upscale': (
-		"If the HD resolution can be achieved by uniformly scaling the initial one "
-		"(there is \"✅\" and not \"⚠️\" in the upscale-line of the status message), "
-		"outputs this precise upscale-value (might be different from the one originally set on the node itself).\n\n"
-		"Otherwise, outputs the original upscale-value intact.\n"
-		"In this case, you shouldn't use it directly and instead should pass it "
-		"to the \"Upscaled Crop/Pad (Best-Res)\" node and use the upscale-output from it.\n\n"
-		"In both cases, it won't hurt to use the \"Upscaled Crop/Pad (Best-Res)\" node and just rely "
-		"on it's `do_crop` and `do_padding` toggle-outputs."
-	),
-	'init_width': "Width for original/initial image",
-	'init_height': "Height for original/initial image",
-	'HD_width': "Width for the (main/upscaled) HD-image",
-	'HD_height': "Height for the (main/upscaled) HD-image",
+	'upscale': _tt.upscale,
+	'init_width': _tt.init_width,
+	'init_height': _tt.init_height,
+	'HD_width': _tt.HD_width,
+	'HD_height': _tt.HD_height,
 })
 
 __extra_inputs_for_upscale_only = {
