@@ -5,13 +5,15 @@ The actual behavior of "Upscaled Crop/Pad" node.
 
 import typing as _t
 
-from .__dataclass import dataclass_with_slots_if_possible as _dataclass_with_slots_if_possible
+from dataclasses import dataclass as _dataclass
+
+from .__dataclass import slots_args as __dataclass_slots_args
 from .funcs import round_pos_int as _round_pos_int, _need_post_resize, _show_text_on_node
 from .enums import *
 from .return_tuples import *
 
 
-@_dataclass_with_slots_if_possible
+@_dataclass(**__dataclass_slots_args)
 class _CropPadInput:
 	"""
 	For the ease of passing between the functions, the entire set of inputs for "Upscaled Crop/Pad" node

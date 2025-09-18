@@ -1,15 +1,8 @@
 # encoding: utf-8
 """
+Compatibility layer for dataclasses in different py3 versions.
 """
 
-import typing as _t
+from sys import version_info as __version_info
 
-from dataclasses import dataclass as dataclass_with_slots_if_possible
-from sys import version_info as _version_info
-
-if _version_info > (3, 10):
-	_dataclass_raw = dataclass_with_slots_if_possible
-
-	def dataclass_with_slots_if_possible(*args, **kwargs):
-		kwargs['slots'] = True
-		return _dataclass_raw(*args, **kwargs)
+slots_args = dict() if __version_info < (3, 10) else dict(slots=True)
