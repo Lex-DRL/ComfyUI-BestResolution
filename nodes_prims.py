@@ -7,119 +7,68 @@ import typing as _t
 
 from inspect import cleandoc as _cleandoc
 
-from frozendict import deepfreeze as _deepfreeze
+from comfy_api.latest import io as _io
 
+from . import _io_enum as _enums
 from . import _meta
-from .docstring_formatter import (
-	format_docstring as _format_docstring,
-	format_object_docstring as _format_object_docstring
-)
-from .enums import *
+from .docstring_formatter import format_docstring as _format_docstring
 
 # ----------------------------------------------------------
 
-_res_priority_data_type = RoundingPriority.all_values()
-_res_priority_data_type_set = set(_res_priority_data_type)
-_res_priority_in_type = (
-	_res_priority_data_type,
-	{
-		'default': RoundingPriority.ORIGINAL,
-		'tooltip': _format_object_docstring(RoundingPriority),
-	}
-)
-_input_types_res_priority = _deepfreeze({
-	'required': {
-		'priority': _res_priority_in_type,
-	},
-	# 'hidden': {
-	# 	'unique_id': 'UNIQUE_ID',
-	# },
-	# 'optional': {},
-})
-
-
-def _res_priority_verify(priority: _t.Union[RoundingPriority, str]) -> str:
-	if priority not in _res_priority_data_type_set:
-		raise ValueError(f"Invalid value for resolution priority: {priority!r}\nExpected one of: {_res_priority_data_type!r}")
-	return str(priority)
-
-
-class BestResolutionPrimResPriority:
+class BestResolutionPrimResPriority(_io.ComfyNode):
 	"""
 	'priority' selector for "Best Resolution" upscale-nodes.
 	"""
-	NODE_NAME = 'BestResolutionPrimResPriority'
-	CATEGORY = _meta.category
-	DESCRIPTION = _format_docstring(_cleandoc(__doc__))
+	_schema = _io.Schema(
+		'BestResolutionPrimResPriority',
+		display_name="Priority (Best-Res)",
+		category=_meta.category,
+		description=_format_docstring(_cleandoc(__doc__)),
+		inputs=[_enums.res_priority_in],
 
-	OUTPUT_NODE = False
+		outputs=[_enums.res_priority_out],
 
-	FUNCTION = 'main'
-	RETURN_TYPES = (_res_priority_data_type, )
-	RETURN_NAMES = ('priority', )
-	# OUTPUT_TOOLTIPS = ('', )
+		is_output_node=False,
+	)
 
 	@classmethod
-	def INPUT_TYPES(cls):
-		return _input_types_res_priority
+	def define_schema(cls) -> _io.Schema:
+		return cls._schema
 
-	def main(
-		self, priority: _t.Union[RoundingPriority, str],
+	@classmethod
+	def execute(
+		cls, priority: _t.Union[_enums.RoundingPriority, str],
 		# show: bool,
 		# unique_id: str = None
-	):
-		return (_res_priority_verify(priority), )
+	) -> _io.NodeOutput:
+		return _io.NodeOutput(_enums.RoundingPriority.validate(priority), )
 
 # ----------------------------------------------------------
 
-_up_strategy_data_type = UpscaledCropPadStrategy.all_values()
-_up_strategy_data_type_set = set(_up_strategy_data_type)
-_up_strategy_in_type = (
-	_up_strategy_data_type,
-	{
-		'default': UpscaledCropPadStrategy.PAD,
-		'tooltip': _format_object_docstring(UpscaledCropPadStrategy),
-	}
-)
-_input_types_up_strategy = _deepfreeze({
-	'required': {
-		'strategy': _up_strategy_in_type,
-	},
-	# 'hidden': {
-	# 	'unique_id': 'UNIQUE_ID',
-	# },
-	# 'optional': {},
-})
-
-
-def _up_strategy_verify(strategy: _t.Union[RoundingPriority, str]) -> str:
-	if strategy not in _up_strategy_data_type_set:
-		raise ValueError(f"Invalid value for upscale strategy: {strategy!r}\nExpected one of: {_up_strategy_data_type!r}")
-	return str(strategy)
-
-
-class BestResolutionPrimCropPadStrategy:
+class BestResolutionPrimCropPadStrategy(_io.ComfyNode):
 	"""
 	'strategy' selector for "Upscaled Crop/Pad" node in "Best Resolution" pack.
 	"""
-	NODE_NAME = 'BestResolutionPrimCropPadStrategy'
-	CATEGORY = _meta.category
-	DESCRIPTION = _format_docstring(_cleandoc(__doc__))
+	_schema = _io.Schema(
+		'BestResolutionPrimCropPadStrategy',
+		display_name="Crop-Pad Strategy (Best-Res)",
+		category=_meta.category,
+		description=_format_docstring(_cleandoc(__doc__)),
+		inputs=[_enums.crop_pad_strategy_in],
 
-	OUTPUT_NODE = False
+		outputs=[_enums.crop_pad_strategy_out],
 
-	FUNCTION = 'main'
-	RETURN_TYPES = (_up_strategy_data_type, )
-	RETURN_NAMES = ('strategy', )
-	# OUTPUT_TOOLTIPS = ('', )
+		is_output_node=False,
+	)
 
 	@classmethod
-	def INPUT_TYPES(cls):
-		return _input_types_up_strategy
+	def define_schema(cls) -> _io.Schema:
+		return cls._schema
 
-	def main(
-		self, strategy: _t.Union[RoundingPriority, str],
+	@classmethod
+	def execute(
+		cls, strategy: _t.Union[_enums.UpscaledCropPadStrategy, str],
 		# show: bool,
 		# unique_id: str = None
-	):
-		return (_up_strategy_verify(strategy), )
+	) -> _io.NodeOutput:
+		return _io.NodeOutput(_enums.UpscaledCropPadStrategy.validate(strategy), )
