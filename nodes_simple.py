@@ -13,7 +13,7 @@ from frozendict import deepfreeze as _deepfreeze
 
 from comfy.comfy_types.node_typing import IO as _IO
 
-from ._funcs import (
+from .funcs import (
 	aspect_ratios_sorted as _aspect_ratios_sorted,
 	number_to_int as _number_to_int,
 	float_width_height_from_area as _float_width_height_from_area,

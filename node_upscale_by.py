@@ -15,7 +15,7 @@ from comfy.comfy_types.node_typing import IO as _IO
 from . import _meta
 from .docstring_formatter import format_docstring as _format_docstring
 from .node_scale import _scale_type_dict as __scale_type_dict_base
-from ._funcs import _show_text_on_node
+from .funcs import _show_text_on_node
 
 
 # ==========================================================

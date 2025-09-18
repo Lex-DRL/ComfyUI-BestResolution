@@ -11,7 +11,7 @@ from frozendict import deepfreeze as _deepfreeze
 
 from comfy.comfy_types.node_typing import IO as _IO
 
-from ._funcs import simple_result_from_approx_wh as _simple_result_from_approx_wh
+from .funcs import simple_result_from_approx_wh as _simple_result_from_approx_wh
 from . import _meta
 from .docstring_formatter import format_docstring as _format_docstring
 from .slot_types import (
