@@ -2,44 +2,41 @@
 """
 """
 
-import typing as _t
+try:
+	# To let the internal non-comfy functions be used without comfy itself
+	from comfy_api.latest import ComfyExtension as _ComfyExtension, io as _io
+	from typing_extensions import override as _override
 
-from .node_crop_pad import BestResolutionUpscaledCropPad
-from .node_scale import BestResolutionScale
-from .node_upscale_by import ImageUpscaleByWithModel
-from .nodes_prims import *
-from .nodes_simple import *
-from .nodes_upscale import *
+	class BestResolutionExtension(_ComfyExtension):
+		@_override
+		async def get_node_list(self) -> list[type[_io.ComfyNode]]:
+			from .node_crop_pad import BestResolutionUpscaledCropPad
+			from .node_scale import BestResolutionScale
+			from .node_upscale_by import ImageUpscaleByWithModel
+			from .nodes_prims import BestResolutionPrimResPriority, BestResolutionPrimCropPadStrategy
+			from .nodes_simple import BestResolutionSimple, BestResolutionFromAspectRatio, BestResolutionFromArea
+			from .nodes_upscale import BestResolutionFromAreaUpscale
 
-NODE_CLASS_MAPPINGS: _t.Dict[str, type] = {
-	"BestResolutionFromArea": BestResolutionFromArea,
-	"BestResolutionFromAreaUpscale": BestResolutionFromAreaUpscale,
-	"BestResolutionFromAspectRatio": BestResolutionFromAspectRatio,
-	"BestResolutionSimple": BestResolutionSimple,
+			return [
+				BestResolutionFromArea,
+				BestResolutionFromAreaUpscale,
+				BestResolutionFromAspectRatio,
+				BestResolutionSimple,
 
-	"BestResolutionScale": BestResolutionScale,
+				BestResolutionScale,
 
-	"BestResolutionPrimCropPadStrategy": BestResolutionPrimCropPadStrategy,
-	"BestResolutionPrimResPriority": BestResolutionPrimResPriority,
+				BestResolutionPrimCropPadStrategy,
+				BestResolutionPrimResPriority,
 
-	"BestResolutionUpscaledCropPad": BestResolutionUpscaledCropPad,
+				BestResolutionUpscaledCropPad,
 
-	"ImageUpscaleByWithModel": ImageUpscaleByWithModel,
-}
-NODE_DISPLAY_NAME_MAPPINGS: _t.Dict[str, str] = {
-	"BestResolutionFromArea": "Best-Res (area)",
-	"BestResolutionFromAreaUpscale": "Best-Res (area+scale)",
-	"BestResolutionFromAspectRatio": "Best-Res (ratio)",
-	"BestResolutionSimple": "Best-Res (simple)",
+				ImageUpscaleByWithModel,
+			]
+except ImportError:
+	class BestResolutionExtension:
+		pass
 
-	"BestResolutionScale": "Scale (Best-Res)",
+async def comfy_entrypoint() -> BestResolutionExtension:
+	return BestResolutionExtension()
 
-	"BestResolutionPrimCropPadStrategy": "Crop-Pad Strategy (Best-Res)",
-	"BestResolutionPrimResPriority": "Priority (Best-Res)",
-
-	"BestResolutionUpscaledCropPad": "Upscaled Crop/Pad (Best-Res)",
-
-	"ImageUpscaleByWithModel": "Upscale Image By (with Model)"
-}
-
-__all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS"]
+__all__ = ("BestResolutionExtension", "comfy_entrypoint")
