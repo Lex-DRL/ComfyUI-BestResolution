@@ -1,9 +1,7 @@
 # encoding: utf-8
 """
-Internal enums.
+Internal enums: option choices, shared between nodes.
 """
-
-import typing as _t
 
 try:
 	from enum import StrEnum as _StrEnum
@@ -13,8 +11,12 @@ except ImportError:
 
 class __BaseEnum(_StrEnum):
 	@classmethod
-	def all_values(cls) -> _t.Tuple[str, ...]:
+	def all_values(cls) -> tuple[str, ...]:
 		return tuple(x.value for x in cls)
+
+	@classmethod
+	def validate(cls, value) -> str:
+		raise NotImplementedError
 
 
 class RoundingPriority(__BaseEnum):
@@ -34,6 +36,16 @@ class RoundingPriority(__BaseEnum):
 	DESIRED = 'desired'
 	ORIGINAL = 'original'
 	UPSCALED = 'upscaled'
+
+	@classmethod
+	def validate(cls, value) -> str:
+		if value not in _res_priority_values_set:
+			raise ValueError(f"Invalid value for resolution priority: {value!r}\nExpected one of: {_res_priority_values!r}")
+		return str(value)
+
+
+_res_priority_values = RoundingPriority.all_values()
+_res_priority_values_set = set(RoundingPriority.all_values())
 
 
 class UpscaledCropPadStrategy(__BaseEnum):
@@ -55,3 +67,13 @@ class UpscaledCropPadStrategy(__BaseEnum):
 	CROP = 'crop only'
 	NEAREST = 'nearest'
 	EXACT_UPSCALE = 'exact-upscale'
+
+	@classmethod
+	def validate(cls, value) -> str:
+		if value not in _up_strategy_values_set:
+			raise ValueError(f"Invalid value for upscale strategy: {value!r}\nExpected one of: {_up_strategy_values!r}")
+		return str(value)
+
+
+_up_strategy_values = UpscaledCropPadStrategy.all_values()
+_up_strategy_values_set = set(UpscaledCropPadStrategy.all_values())
