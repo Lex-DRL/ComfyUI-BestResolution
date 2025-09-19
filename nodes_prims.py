@@ -11,7 +11,7 @@ from comfy_api.latest import io as _io
 
 from . import _io_enum as _enums
 from . import _meta
-from .docstring_formatter import format_docstring as _format_docstring
+from .__docstring_formatter import format_docstring as _format_docstring
 
 # ----------------------------------------------------------
 

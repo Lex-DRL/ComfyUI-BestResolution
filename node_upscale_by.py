@@ -11,7 +11,7 @@ from nodes import ImageScaleBy as _ImageScaleBy
 from . import _io_simple as _i
 from ._io_simple import _io_override
 from . import _meta
-from .docstring_formatter import format_docstring as _format_docstring
+from .__docstring_formatter import format_docstring as _format_docstring
 from .funcs import _show_text_on_node
 
 

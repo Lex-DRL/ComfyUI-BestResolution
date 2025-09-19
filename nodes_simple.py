@@ -12,7 +12,7 @@ from . import _io_simple as _i
 from ._io_simple import _io_override
 from . import _meta
 from . import _tooltips as _tt
-from .docstring_formatter import format_docstring as _format_docstring
+from .__docstring_formatter import format_docstring as _format_docstring
 from .funcs import (
 	aspect_ratios_sorted as _aspect_ratios_sorted,
 	number_to_int as _number_to_int,

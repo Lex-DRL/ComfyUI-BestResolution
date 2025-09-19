@@ -10,7 +10,7 @@ from comfy_api.latest import io as _io
 from . import _io_simple as _i
 from ._io_simple import _io_override
 from . import _meta
-from .docstring_formatter import format_docstring as _format_docstring
+from .__docstring_formatter import format_docstring as _format_docstring
 from .funcs import simple_result_from_approx_wh as _simple_result_from_approx_wh
 
 

@@ -12,7 +12,7 @@ from . import _io_simple as _i
 from ._io_simple import _io_override
 from . import _meta
 from . import _tooltips as _tt
-from .docstring_formatter import format_docstring as _format_docstring
+from .__docstring_formatter import format_docstring as _format_docstring
 from .funcs_crop_pad import upscaled_crop_pad as _upscaled_crop_pad
 
 # ----------------------------------------------------------
