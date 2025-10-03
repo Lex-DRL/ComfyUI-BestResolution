@@ -1,8 +1,17 @@
 ## `TODO`
+> [!NOTE]
+> - Add options for `crop/pad` node - to determine the order of [crop/pad] -> upscale -> [crop/pad].
+> - One of:
+>   - Add `upscale` versions for `simple` and `ratio` nodes, too.
+>   - (maybe?) separate the upscale part into its own node - to make it compatible with any simple nodes.
+> - Add node for auto-detecting USDU-padding from initial res.
 
-- Add `upscale` versions for `simple` and `ratio` nodes, too.
-- Add options for `crop/pad` node - to determine the order of [crop/pad] -> upscale -> [crop/pad].
-- Add node for auto-detecting USDU-padding from initial res.
+# v3.0.0
+
+- From now on, the major version number will reflect the Comfy's node API version used.
+- `❗ MAJOR` internal change: All the nodes migrated to Comfy's nodes v3 API schema.
+- Increased widget precision for various float inputs.
+- No other new features or changes in behavior.
 
 # v1.1.6
 
