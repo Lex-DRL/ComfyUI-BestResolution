@@ -4,6 +4,10 @@
 - Add options for `crop/pad` node - to determine the order of [crop/pad] -> upscale -> [crop/pad].
 - Add node for auto-detecting USDU-padding from initial res.
 
+# v1.1.6
+
+- Temporary workaround: the old (v1) code of built-in upscaling nodes copied internally. A minor update in response to: https://github.com/comfyanonymous/ComfyUI/pull/10149
+
 # v1.1.5
 
 - ... and another one.
