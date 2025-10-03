@@ -6,60 +6,26 @@ Advanced versions of nodes - with upscale.
 import typing as _t
 
 from inspect import cleandoc as _cleandoc
+from itertools import chain as _chain
 
-from frozendict import deepfreeze as _deepfreeze, frozendict as _frozendict
+from comfy_api.latest import io as _io
 
-from comfy.comfy_types.node_typing import IO as _IO
-
+from . import _io_enum as _enums
+from . import _io_simple as _i
+from ._io_simple import _io_override
+from . import _meta
+from . import _tooltips as _tt
+from .docstring_formatter import format_docstring as _format_docstring
 from .funcs import (
 	number_to_int as _number_to_int,
 	float_width_height_from_area as _float_width_height_from_area,
 	upscale_result_from_approx_wh as _upscale_result_from_approx_wh
 )
-from . import _meta
-from . import _tooltips as _tt
-from .docstring_formatter import format_docstring as _format_docstring
-from .enums import *
-from .nodes_simple import _input_types_area
-from .nodes_prims import _res_priority_in_type, _res_priority_verify
-from .slot_types import (
-	type_dict_step_upscale1 as _type_dict_step_upscale1,
-	upscale_in_type as _upscale_in_type
-)
+from .nodes_simple import BestResolutionFromArea as _BestResolutionFromArea
 
 # ----------------------------------------------------------
 
-_return_types_upscale = (_IO.FLOAT, _IO.INT, _IO.INT, _IO.INT, _IO.INT)
-_return_ttips_upscale = _frozendict({
-	'upscale': _tt.upscale,
-	'init_width': _tt.init_width,
-	'init_height': _tt.init_height,
-	'HD_width': _tt.HD_width,
-	'HD_height': _tt.HD_height,
-})
-
-__extra_inputs_for_upscale_only = {
-	'priority': _res_priority_in_type,
-	'upscale': _upscale_in_type,
-	'HD_step': (_IO.INT, dict(_type_dict_step_upscale1, **{
-		'tooltip': "Same as the main `step`, but for the upscaled resolution.\n144 = 8 * 2 * 3 * 3",
-	})),
-}
-
-_input_types_area_upscale = _deepfreeze({
-	'required': dict(
-		(k_v for k_v in _input_types_area['required'].items() if k_v[0] != 'show'),
-		**__extra_inputs_for_upscale_only,
-		# show=_input_types_area['required']['show'],
-	),
-	'hidden': {
-		'unique_id': 'UNIQUE_ID',
-	},
-	# 'optional': {},
-})
-
-
-class BestResolutionFromAreaUpscale:
+class BestResolutionFromAreaUpscale(_io.ComfyNode):
 	"""
 	The most efficient way of selecting an optimal resolution:
 	image size selected indirectly - by the total desired resolution (area) + aspect ratio...
@@ -76,32 +42,53 @@ class BestResolutionFromAreaUpscale:
 	By simply providing this single number and setting your aspect ratio/orientation, you get the width and height to
 	produce the closest total resolution to the training set, while also respecting image proportions and step-rounding.
 	"""
-	NODE_NAME = 'BestResolutionFromAreaUpscale'
-	CATEGORY = _meta.category
-	DESCRIPTION = _format_docstring(_cleandoc(__doc__))
+	_schema = _io.Schema(
+		'BestResolutionFromAreaUpscale',
+		display_name="Best-Res (area+scale)",
+		category=_meta.category,
+		description=_format_docstring(_cleandoc(__doc__)),
 
-	OUTPUT_NODE = True
+		inputs=list(_chain(
+			(
+				x for x in _BestResolutionFromArea._schema.inputs
+				if x.id != 'show'
+			),
+			[
+				_enums.res_priority_in,
+				_i.upscale,
+				_io_override(_i.step_upscale1, 'HD_step')
+			]
+		)),
 
-	FUNCTION = 'main'
-	RETURN_TYPES = _return_types_upscale
-	RETURN_NAMES = tuple(_return_ttips_upscale.keys())
-	OUTPUT_TOOLTIPS = tuple(_return_ttips_upscale.values())
+		hidden=[_io.Hidden.unique_id],
+
+		outputs=[
+			_io.Float.Output('UPSCALE', display_name='upscale', tooltip=_tt.upscale),
+			_io.Int.Output('init_width', display_name='init_width', tooltip=_tt.init_width),
+			_io.Int.Output('init_height', display_name='init_height', tooltip=_tt.init_height),
+			_io.Int.Output('HD_width', display_name='HD_width', tooltip=_tt.HD_width),
+			_io.Int.Output('HD_height', display_name='HD_height', tooltip=_tt.HD_height),
+		],
+
+		is_output_node=True,
+	)
 
 	@classmethod
-	def INPUT_TYPES(cls):
-		return _input_types_area_upscale
+	def define_schema(cls) -> _io.Schema:
+		return cls._schema
 
-	def main(
-		self, square_size: int, step: int, landscape: bool, aspect_a: float, aspect_b: float,
-		priority: _t.Union[RoundingPriority, str], upscale: float, HD_step:int,
+	@classmethod
+	def execute(
+		cls,
+		square_size: int, step: int, landscape: bool, aspect_a: float, aspect_b: float,
+		priority: _t.Union[_enums.RoundingPriority, str], upscale: float, HD_step:int,
 		# show: bool,
-		unique_id: str = None
-	):
+	) -> _io.NodeOutput:
 		square_size: int = _number_to_int(square_size)
 		width_f, height_f = _float_width_height_from_area(square_size, landscape, aspect_a, aspect_b)
-		return _upscale_result_from_approx_wh(
+		return _io.NodeOutput(*_upscale_result_from_approx_wh(
 			width_f, height_f, step,
-			_res_priority_verify(priority), upscale, HD_step,
+			_enums.RoundingPriority.validate(priority), upscale, HD_step,
 			# show,
-			unique_id=unique_id, target_square_size=square_size
-		)
+			unique_id=cls.hidden.unique_id, target_square_size=square_size
+		))
