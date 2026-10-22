@@ -1,5 +1,6 @@
 # encoding: utf-8
 """
+Internal utility functions for auto-creating tooltips from dosctrings.
 """
 
 import typing as _t
@@ -8,16 +9,16 @@ from inspect import getdoc as _getdoc
 import re as _re
 
 
-_re_indent_match = _re.compile("(\t*)( +)(\t*)(.*?)$").match
-_re_tab_indent_match = _re.compile("(\t+)(.*?)$").match
+_re_indent_match = _re.compile(r"(\t*)( +)(\t*)(.*?)$").match
+_re_tab_indent_match = _re.compile(r"(\t+)(.*?)$").match
 _re_list_line_match = _re.compile(
-	"(\s*)("
-	"[-*•]+"
-	"|"
-	"[a-zA-Z]\s*[.)]"
-	"|"
-	"[0-9+]\s*[.)]"
-	")\s+"
+	r"(\s*)("
+	r"[-*•]+"
+	r"|"
+	r"[a-zA-Z]\s*[.)]"
+	r"|"
+	r"[0-9+]\s*[.)]"
+	r")\s+"
 ).match
 
 
