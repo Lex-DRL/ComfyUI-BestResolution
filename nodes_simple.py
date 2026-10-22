@@ -22,7 +22,7 @@ from .funcs import (
 
 # ----------------------------------------------------------
 
-class BestResolutionSimple(_io.ComfyNode):
+class BRSimple(_io.ComfyNode):
 	"""
 	The simplest node for easier selection of an optimal resolution:
 	only rounding performed, desired image size specified directly.
@@ -67,7 +67,7 @@ class BestResolutionSimple(_io.ComfyNode):
 
 # ----------------------------------------------------------
 
-class BestResolutionFromAspectRatio(_io.ComfyNode):
+class BRFromAspectRatio(_io.ComfyNode):
 	"""
 	A more advanced node for easier selection of an optimal resolution:
 	image size selected indirectly - by one of the sides + aspect ratio.
@@ -89,7 +89,7 @@ class BestResolutionFromAspectRatio(_io.ComfyNode):
 
 		hidden=[_io.Hidden.unique_id],
 
-		outputs=list(BestResolutionSimple._schema.outputs),
+		outputs=list(BRSimple._schema.outputs),
 
 		is_output_node=True,
 	)
@@ -124,7 +124,7 @@ class BestResolutionFromAspectRatio(_io.ComfyNode):
 
 # ----------------------------------------------------------
 
-class BestResolutionFromArea(_io.ComfyNode):
+class BRFromArea(_io.ComfyNode):
 	"""
 	The most efficient way of selecting an optimal resolution:
 	image size selected indirectly - by the total desired resolution (area) + aspect ratio.
@@ -155,7 +155,7 @@ class BestResolutionFromArea(_io.ComfyNode):
 
 		hidden=[_io.Hidden.unique_id],
 
-		outputs=list(BestResolutionSimple._schema.outputs),
+		outputs=list(BRSimple._schema.outputs),
 
 		is_output_node=True,
 	)

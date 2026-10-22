@@ -15,7 +15,7 @@ from .__docstring_formatter import format_docstring as _format_docstring
 
 # ----------------------------------------------------------
 
-class BestResolutionPrimResPriority(_io.ComfyNode):
+class PrimResPriority(_io.ComfyNode):
 	"""
 	'priority' selector for "Best Resolution" upscale-nodes.
 	"""
@@ -45,7 +45,7 @@ class BestResolutionPrimResPriority(_io.ComfyNode):
 
 # ----------------------------------------------------------
 
-class BestResolutionPrimCropPadStrategy(_io.ComfyNode):
+class PrimCropPadStrategy(_io.ComfyNode):
 	"""
 	'strategy' selector for "Upscaled Crop/Pad" node in "Best Resolution" pack.
 	"""

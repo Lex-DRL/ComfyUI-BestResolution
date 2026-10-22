@@ -14,7 +14,7 @@ from .__docstring_formatter import format_docstring as _format_docstring
 from .funcs import simple_result_from_approx_wh as _simple_result_from_approx_wh
 
 
-class BestResolutionScale(_io.ComfyNode):
+class BRScale(_io.ComfyNode):
 	"""
 	Scale width and height by the same value + round them.
 	"""

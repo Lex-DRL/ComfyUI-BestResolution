@@ -17,7 +17,7 @@ from .funcs_crop_pad import upscaled_crop_pad as _upscaled_crop_pad
 
 # ----------------------------------------------------------
 
-class BestResolutionUpscaledCropPad(_io.ComfyNode):
+class BRUpscaledCropPad(_io.ComfyNode):
 	"""
 	If the original resolution can't be scaled to the higher one uniformly (i.e., without stretching),
 	this node detects the appropriate values for cropping/out-painting.

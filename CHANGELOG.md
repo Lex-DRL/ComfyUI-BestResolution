@@ -9,7 +9,9 @@
 # v3.0.0
 
 - From now on, the major version number will reflect the Comfy's node API version used.
-- `❗ MAJOR` internal change: All the nodes migrated to Comfy's nodes v3 API schema.
+- `❗ MAJOR` internal changes:
+  - **All the nodes migrated to Comfy's nodes v3 API schema.**
+  - Shorter class names.
 - Increased widget precision for various float inputs.
 - No other new features or changes in behavior.
 

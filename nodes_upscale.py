@@ -21,11 +21,11 @@ from .funcs import (
 	float_width_height_from_area as _float_width_height_from_area,
 	upscale_result_from_approx_wh as _upscale_result_from_approx_wh
 )
-from .nodes_simple import BestResolutionFromArea as _BestResolutionFromArea
+from .nodes_simple import BRFromArea as _BestResolutionFromArea
 
 # ----------------------------------------------------------
 
-class BestResolutionFromAreaUpscale(_io.ComfyNode):
+class BRFromAreaUpscale(_io.ComfyNode):
 	"""
 	The most efficient way of selecting an optimal resolution:
 	image size selected indirectly - by the total desired resolution (area) + aspect ratio...

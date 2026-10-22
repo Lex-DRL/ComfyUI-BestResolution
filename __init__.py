@@ -10,25 +10,25 @@ try:
 	class BestResolutionExtension(_ComfyExtension):
 		@_override
 		async def get_node_list(self) -> list[type[_io.ComfyNode]]:
-			from .node_crop_pad import BestResolutionUpscaledCropPad
-			from .node_scale import BestResolutionScale
+			from .node_crop_pad import BRUpscaledCropPad
+			from .node_scale import BRScale
 			from .node_upscale_by import ImageUpscaleByWithModel
-			from .nodes_prims import BestResolutionPrimResPriority, BestResolutionPrimCropPadStrategy
-			from .nodes_simple import BestResolutionSimple, BestResolutionFromAspectRatio, BestResolutionFromArea
-			from .nodes_upscale import BestResolutionFromAreaUpscale
+			from .nodes_prims import PrimResPriority, PrimCropPadStrategy
+			from .nodes_simple import BRSimple, BRFromAspectRatio, BRFromArea
+			from .nodes_upscale import BRFromAreaUpscale
 
 			return [
-				BestResolutionFromArea,
-				BestResolutionFromAreaUpscale,
-				BestResolutionFromAspectRatio,
-				BestResolutionSimple,
+				BRFromArea,
+				BRFromAreaUpscale,
+				BRFromAspectRatio,
+				BRSimple,
 
-				BestResolutionScale,
+				BRScale,
 
-				BestResolutionPrimCropPadStrategy,
-				BestResolutionPrimResPriority,
+				PrimCropPadStrategy,
+				PrimResPriority,
 
-				BestResolutionUpscaledCropPad,
+				BRUpscaledCropPad,
 
 				ImageUpscaleByWithModel,
 			]
